@@ -7,8 +7,9 @@ External RAM size       : 0
 Data Stack size         : 128
 *****************************************************/
 
-#define DEL_START 45
-#define DEL_CYCLE 25
+#define DEL_START           45  //  delay leds start
+#define DEL_CYCLE           25  //  delay in each cycle        
+#define MAX_COMMAND_SIZE    4   //  Max command size
 //  Button section
 #define btn1 PINC.1
 #define btn2 PINC.3
@@ -47,6 +48,8 @@ void DisableLeds()
 void main(void)
 {
     char buff[17];
+    char command[MAX_COMMAND_SIZE];
+    int command_pos = 0;
     int counter = 0;
     int del_size = DEL_CYCLE;
     unsigned int wh_c=1;
@@ -138,9 +141,35 @@ void main(void)
             delay_ms(10);        
             wh_c = 1;
         }
-      
-          delay_ms(del_size);
-             
+          
+        delay_ms(del_size);
+
+        if(btn1 == 0 || btn2 == 0 || btn3 == 0)
+        {
+            if(btn1 == 0)
+                command[command_pos] = 'A';
+            else if(btn2 == 0)            
+                command[command_pos] = 'B';
+            else
+                command[command_pos] = 'C';
+            command_pos++;
+        }                 
+        
+        if(btn4 == 0)
+        {
+            command[0]  = 0;
+            command_pos = 0;
+        }
+
+        lcd_clear();
+        lcd_gotoxy(0,0); 
+        //sprintf(buff,"PINA-%d:PINB-%d",PINA,PINB);                          
+        lcd_puts(command);
+//        lcd_gotoxy(0,1);
+//        sprintf(buff,"PINC-%d:PIND-%d",PINC,PIND);                          
+//        lcd_puts(buff);
+
+        /*     
         if(btn1 == 0 && btn3 == 0)
         {
             lcd_clear();
@@ -172,7 +201,7 @@ void main(void)
             sprintf(buff,"UBRRH-%d:UCSRC-%d",UBRRH,UCSRC);                          
             lcd_puts(buff);
               
-            lcd_gotoxy(0,1);      /* нижн€€ строка, 0 позици€ */
+            lcd_gotoxy(0,1);   
             lcd_putsf("Andrey Shamis");
 
 		}
@@ -183,7 +212,7 @@ void main(void)
 			led2 = 0; //0-On ; 1 - off
             //PORTC.6 = 0; //   1-OFF
             lcd_clear();	
-            lcd_gotoxy(0,0);      /* нижн€€ строка, 0 позици€ */   
+            lcd_gotoxy(0,0);     
             sprintf(buff,"SREG-%d:SPH-%d",SREG,SPH);                          
             lcd_puts(buff);
             lcd_gotoxy(0,1);
@@ -217,6 +246,8 @@ void main(void)
         {
             DisableLeds(); 
             del_size = DEL_CYCLE;
-        }
+        } 
+        
+        */
     }
 }
