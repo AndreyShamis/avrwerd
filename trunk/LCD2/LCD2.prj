@@ -14,7 +14,7 @@ AllowDisplayFunctionCallTree=1
 CleanUp=2
 Active0=0
 PageIndex0=0
-TimeStamp1=1057332578
+TimeStamp1=1057452578
 PageIndex1=1
 [Compiler]
 RebuildAll=0
@@ -106,7 +106,7 @@ WarningUnknownPragma=1
 LinkerWarnings=1
 DebugBootLoader=0
 WatchAVR8LAutoVariables=0
-Build=223
+Build=229
 UseEEPROMLocation0=1
 [Assembler]
 OutputFormat=1
@@ -210,13 +210,13 @@ Row=0
 Column=0
 ScrollPosX=0
 ScrollPosY=0
-TimeStamp=1057332664
+TimeStamp=1057452653
 [Bookmarks2]
-TimeStamp=1057332578
-Row=10
-Column=14
+TimeStamp=1057452578
+Row=174
+Column=8
 ScrollPosX=0
-ScrollPosY=0
+ScrollPosY=153
 BK0=-1
 BK1=-1
 BK2=-1
@@ -291,8 +291,6 @@ BK6=-1
 BK7=-1
 BK8=-1
 BK9=-1
-[FoldedCode2]
-Blocks=0
 [FoldedCode6]
 Blocks=0
 [Bookmarks7]
@@ -330,3 +328,5 @@ F3=C:\cvavr2\inc\delay.h
 F4=C:\cvavr2\inc\stdio.h
 F5=C:\cvavr2\inc\stdarg.h
 F6=C:\cvavr2\inc\lcd.h
+[FoldedCode2]
+Blocks=0
