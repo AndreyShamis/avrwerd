@@ -9,7 +9,7 @@ Data Stack size         : 128
 
 #define DEL_START           45  //  delay leds start
 #define DEL_CYCLE           25  //  delay in each cycle        
-#define MAX_COMMAND_SIZE    4   //  Max command size
+#define MAX_COMMAND_SIZE    6   //  Max command size
 //  Button section
 #define btn1 PINC.1
 #define btn2 PINC.3
@@ -36,10 +36,10 @@ Data Stack size         : 128
 //  Function For disable all leds on PORTC
 void DisableLeds()
 {    
-    PORTC.0 =0;
-    PORTC.2 =1;
-    PORTC.6 =1;
-    PORTC.7 =1;
+    led1 =0;
+    led2 =1;
+    led3 =1;
+    led4 =1;
    // PORTC=0x1C;
 }
 
@@ -47,10 +47,10 @@ void DisableLeds()
 //  Main function
 void main(void)
 {
-    char buff[17];
+  //  char buff[17];
     char command[MAX_COMMAND_SIZE];
     int command_pos = 0;
-    int counter = 0;
+   // int counter = 0;
     int del_size = DEL_CYCLE;
     unsigned int wh_c=1;
     PORTA=0x00;
@@ -144,7 +144,7 @@ void main(void)
           
         delay_ms(del_size);
 
-        if(btn1 == 0 || btn2 == 0 || btn3 == 0)
+        if(command_pos < MAX_COMMAND_SIZE && ( btn1 == 0 || btn2 == 0 || btn3 == 0))
         {
             if(btn1 == 0)
                 command[command_pos] = 'A';
@@ -156,8 +156,13 @@ void main(void)
         }                 
         
         if(btn4 == 0)
-        {
-            command[0]  = 0;
+        {        
+            short int ind;           
+            for(ind=0;ind<MAX_COMMAND_SIZE;ind++)
+            {
+                command[ind] = 0;
+            }
+            //command[0]  = 0;
             command_pos = 0;
         }
 
