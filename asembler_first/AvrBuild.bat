@@ -1,0 +1,2 @@
+@ECHO OFF
+"C:\Program Files\Atmel\AVR Tools\AvrAssembler2\avrasm2.exe" -S "C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\labels.tmp" -fI -W+ie -C V2E -o "C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.hex" -d "C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.obj" -e "C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.eep" -m "C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.map" "C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.asm"

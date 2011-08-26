@@ -1,0 +1,33 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.1.42</VERSION>
+ <DEVICE>ATmega8515</DEVICE>
+ <WORKING_DIR>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:\Program Files\Atmel\AVR Tools\AvrAssembler2\Appnotes</DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:\Program Files\Atmel\AVR Tools\AvrAssembler2\Appnotes\m8515def.inc</FILE>
+  <FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\macro.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.hex</FILE>
+  <FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.eep</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.map</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <Var1><FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.asm</FILE><LINE>8</LINE></Var1>
+  <Var2><FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.asm</FILE><LINE>9</LINE></Var2>
+  <NOP1><FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.asm</FILE><LINE>16</LINE></NOP1>
+  <INT_interrupt><FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.asm</FILE><LINE>52</LINE></INT_interrupt>
+  <NOP2><FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.asm</FILE><LINE>19</LINE></NOP2>
+  <Wait><FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.asm</FILE><LINE>56</LINE></Wait>
+  <data><FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.asm</FILE><LINE>64</LINE></data>
+  <M1><FILE>C:\DropBox\My Dropbox\Z_PROG_CODE\AVR\asembler_first\asembler_first.asm</FILE><LINE>57</LINE></M1>
+ </LABELS>
+</ASSEMBLER_INFO>
