@@ -40,7 +40,31 @@ usbconfig.h для использования других ножек I/O USB. Пожалуйста помните, что USB 
 #define led2 2	//PORTC2
 #define led3 6	//PORTC6
 #define led4 7	//PORTC7
-
+/*
+typedef struct Bits_t
+{
+	uint8_t Bit0 :1;
+	uint8_t Bit1 :1;
+	uint8_t Bit2 :1;
+	uint8_t Bit3 :1;
+	uint8_t Bit4 :1;
+	uint8_t Bit5 :1;
+	uint8_t Bit6 :1;
+	uint8_t Bit7 :1;
+}Bits;
+#define PortaBits (*((volatile Bits*)&PORTA))
+#define LedPin PortaBits.Bit5
+int main()
+{
+	DDRA = 1 << 5;
+	while(1)
+	{
+		LedPin = 1;//?????? 
+		_delay_ms(100);
+		LedPin = 0;//?????????
+*/
+#define PortaBits (*((volatile Bits*)&PORTA))
+#define LedPin PortaBits.Bit5
 /* ------------------------------------------------------------------------- */
 /* ----------------------------- интерфейс USB ----------------------------- */
 PROGMEM char usbHidReportDescriptor[22] = {    /* дескриптор репорта USB */
