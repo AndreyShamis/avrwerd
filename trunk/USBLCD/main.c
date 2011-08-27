@@ -1,14 +1,6 @@
-
 /*
-Ётот пример должен работать на большинстве AVR с минимальными изменени€ми. Ќе используютс€
-никакие аппаратные ресурсы микроконтроллера, за исключением INT0. ¬ы можете помен€ть 
-usbconfig.h дл€ использовани€ других ножек I/O USB. ѕожалуйста помните, что USB D+ должен
-быть подсоединен на ножку INT0, или также как минимум быть соединенным с INT0.
-ћы предполагаем, что LED подсоединен к порту B, бит 0. ≈сли ¬ы подсоединили его на
-другой порт или бит, помен€йте макроопределение ниже:
+	Andrey Shamis
 */
-
-
 #include <avr/io.h>
 #include <inttypes.h>
 #include <avr/wdt.h>
@@ -25,7 +17,11 @@ usbconfig.h дл€ использовани€ других ножек I/O USB. ѕожалуйста помните, что USB 
 #include "requests.h"       /* номера custom request, используемые нами */
 #include "avr_compat.h"
 #include "lcd_lib.h" 
-  
+
+
+
+
+
 #define DEL_START           5//*8  //  delay leds start
 #define DEL_CYCLE           5//*8  //  delay in each cycle        
 #define MAX_COMMAND_SIZE    6   //  Max command size
@@ -91,21 +87,22 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 
     if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_VENDOR)
 	{
-        if(rq->bRequest == CUSTOM_RQ_SET_STATUS){
-				LCDclr();
-				LCDGotoXY(0,1);
+        if(rq->bRequest == CUSTOM_RQ_SET_STATUS)
+		{
             if(rq->wValue.bytes[0] & 1)
                 PORTC |= _BV(0);
             else
 				PORTC &= ~_BV(0);
         }
-		else if(rq->bRequest == CUSTOM_RQ_SET_STATUS10){
+		else if(rq->bRequest == CUSTOM_RQ_SET_STATUS10)
+		{
             if(rq->wValue.bytes[0] & 1)
                 PORTC |= _BV(2);
             else
 				PORTC &= ~_BV(2);
         }
-		else if(rq->bRequest == CUSTOM_RQ_GET_STATUS){
+		else if(rq->bRequest == CUSTOM_RQ_GET_STATUS)
+		{
             static uchar dataBuffer[1];     /* буфер должен оставатьс€ валидным привыходе из usbFunctionSetup */
             dataBuffer[0] = bit_is_set(PORTC,0);//((LED_PORT_OUTPUT & _BV(LED_BIT)) != 0);
             usbMsgPtr = dataBuffer;         /* говорим драйверу, какие данные вернуть */
@@ -179,8 +176,8 @@ void DoCommand(long int comm)
     LCDprint(buff,sizeof(buff));
     
 }
-/* ------------------------------------------------------------------------- */
-
+//extern void Nisuy(void);
+//=============================================================================
 int main(void)
 {
     char command[MAX_COMMAND_SIZE];
@@ -216,6 +213,7 @@ int main(void)
 	LCDGotoXY(3,0);
 	LCDprint("Starting...",11);
 	memset(command,' ',MAX_COMMAND_SIZE);
+
     for(;;){
         usbPoll();
         if(command_pos < MAX_COMMAND_SIZE  && (bit_is_clear(PINC,btn1) || bit_is_clear(PINC,btn2) || bit_is_clear(PINC,btn3)))
