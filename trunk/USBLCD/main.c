@@ -1,6 +1,11 @@
+//=============================================================================
+//=============================================================================
 /*
 	Andrey Shamis
 */
+//=============================================================================
+//=============================================================================
+
 #include <avr/io.h>
 #include <inttypes.h>
 #include <avr/wdt.h>
@@ -18,24 +23,9 @@
 #include "avr_compat.h"
 #include "lcd_lib.h" 
 
+//=============================================================================
+//=============================================================================
 
-
-
-
-#define DEL_START           5//*8  //  delay leds start
-#define DEL_CYCLE           5//*8  //  delay in each cycle        
-#define MAX_COMMAND_SIZE    6   //  Max command size
-
-#define BUFF_SIZE           17
-
-#define btn1 1
-#define btn2 3
-#define btn3 5
-#define btn4 4
-#define led1 0	//PORTC0
-#define led2 2	//PORTC2
-#define led3 6	//PORTC6
-#define led4 7	//PORTC7
 /*
 typedef struct Bits_t
 {
@@ -59,9 +49,51 @@ int main()
 		_delay_ms(100);
 		LedPin = 0;//?????????
 */
+
+//=============================================================================
+//=============================================================================
+
+#define DEL_START           5//*8  //  delay leds start
+#define DEL_CYCLE           5//*8  //  delay in each cycle        
+#define MAX_COMMAND_SIZE    6   //  Max command size
+
+#define BUFF_SIZE           17
+
+#define btn1 1
+#define btn2 3
+#define btn3 5
+#define btn4 4
+#define led1 0	//PORTC0
+#define led2 2	//PORTC2
+#define led3 6	//PORTC6
+#define led4 7	//PORTC7
+
 #define PortaBits (*((volatile Bits*)&PORTA))
 #define LedPin PortaBits.Bit5
+
+#define C_DRIVE_VECTOR_Y_UP		1
+#define C_DRIVE_VECTOR_Y_DOWN	2
+//=============================================================================
+//=============================================================================
+
+//  Function For 
+void DoCommand(long *comm);
+void DisableLeds(void);
+//=============================================================================
+/* usbFunctionWrite()  usbdrv/usbdrv.h. */
+uchar   usbFunctionWrite(uchar *data, uchar len);
+//=============================================================================
+/* usbFunctionRead() usbdrv/usbdrv.h.*/
+uchar   usbFunctionRead(uchar *data, uchar len);
+//=============================================================================
+/* Дескриптор выше - только макет, это заглушает драйверы. Репорт, который его 
+ *  описывает, состоит из одного байта неопределенных данных. Мы не передаем
+ *  наши данные через HID-репорты, вместо этого мы используем custom-запросы.*/
 /* ------------------------------------------------------------------------- */
+usbMsgLen_t usbFunctionSetup(uchar data[8]);
+
+//=============================================================================
+//=============================================================================
 /* ----------------------------- интерфейс USB ----------------------------- */
 PROGMEM char usbHidReportDescriptor[22] = {    /* дескриптор репорта USB */
     0x06, 0x00, 0xff,              // USAGE_PAGE (Generic Desktop)
@@ -75,6 +107,185 @@ PROGMEM char usbHidReportDescriptor[22] = {    /* дескриптор репорта USB */
     0xb2, 0x02, 0x01,              //   FEATURE (Data,Var,Abs,Buf)
     0xc0                           // END_COLLECTION
 };
+
+static uchar    currentAddress;
+static uchar    bytesRemaining;
+
+
+struct MashineStatus
+{
+	char	C_napravlenie;
+	char	C_povorot;	
+	char	C_OverControl;
+
+};
+
+static struct MashineStatus _mashine;
+//=============================================================================
+//=============================================================================
+//=============================================================================
+int main(void)
+{
+    char command[MAX_COMMAND_SIZE];
+    long  	prev_comm		=	0;
+    int 	command_pos 	= 	0;
+    int 	del_size 		= 	DEL_CYCLE;
+	int 	lcd_update_time	=	30;	
+	PORTA=0x00;
+	DDRA=0xff;
+	PORTB=0x01;
+	DDRB=0x01;
+	DDRC=0xC5;
+	PORTC=0xC4;
+
+	//DDRD = 0xff;
+	//PORTD=0xff;
+	DDRD = 0x03;
+	PORTD=0x03;
+
+	GICR|=0x40;
+	MCUCR=0x00;
+	EMCUCR=0x00;
+	GIFR=0x40;
+	TIMSK=0x00;
+
+	ACSR=0x80;
+	SFIOR=0x00;
+	//uchar   i;
+
+    usbInit();
+    usbDeviceDisconnect();  /* принудительно запускаем ре-энумерацию, делайте это, когда прерывания запрещены! */
+	LCDinit();
+    usbDeviceConnect();
+    sei();
+
+	LCDcursorOFF();
+	LCDclr();
+	LCDGotoXY(3,0);
+	LCDprint("Starting...",11);
+	memset(command,' ',MAX_COMMAND_SIZE);
+
+    for(;;){
+        //usbPoll();
+        if(command_pos < MAX_COMMAND_SIZE  && (bit_is_clear(PINC,btn1) || bit_is_clear(PINC,btn2) || bit_is_clear(PINC,btn3)))
+		{
+			_delay_ms(del_size*10);
+			if(bit_is_clear(PINC,btn1) && bit_is_clear(PINC,btn2))
+				command[command_pos] = '4';
+			else if(bit_is_clear(PINC,btn1) && bit_is_clear(PINC,btn3))
+				command[command_pos] = '5';
+			else if(bit_is_clear(PINC,btn2) && bit_is_clear(PINC,btn3))
+				command[command_pos] = '6';
+            else if(bit_is_clear(PINC,btn1))
+                command[command_pos] = '1';
+            else if(bit_is_clear(PINC,btn2))
+                command[command_pos] = '2';
+            else
+                command[command_pos] = '3';
+				
+            command_pos++;  
+			LCDGotoXY(0,0);
+			LCDprint(command,sizeof(command));
+			_delay_ms(del_size*30);
+        }                 
+               
+        if(lcd_update_time == 30)
+		{
+                DoCommand(&prev_comm);
+				lcd_update_time = 0;
+		}
+		else
+		{
+			lcd_update_time++;
+		}
+
+
+        
+        if(bit_is_clear(PINC,btn4))
+		{               
+			LCDclr();
+            prev_comm=  atol(command);
+            DoCommand(&prev_comm);    
+            memset(command,' ',MAX_COMMAND_SIZE);
+            command_pos = 0;  
+            _delay_ms(del_size*30);
+        }
+
+		//DisableLeds();
+    }
+    return 0;
+}
+
+
+//=============================================================================
+//  Function For 
+void DoCommand(long *comm)
+{    
+    char buff[BUFF_SIZE];
+    LCDGotoXY(0,1);
+    memset(buff,' ',BUFF_SIZE);
+    switch(*comm)  
+    {
+        case 3333:sprintf(buff,"PRAMO %d-%d-%d",_mashine.C_napravlenie,_mashine.C_povorot,_mashine.C_OverControl);
+                	break;
+        case 1: _mashine.C_napravlenie = C_DRIVE_VECTOR_Y_UP;
+				PORTC |= _BV(0);
+				*comm = 3333;
+                break;
+        case 2: _mashine.C_napravlenie = C_DRIVE_VECTOR_Y_DOWN;
+				*comm = 3333;
+                break;
+        case 3: _mashine.C_napravlenie = 0;
+				*comm = 3333;
+                break;
+        case 11: sprintf(buff,"PA-%d:PB-%d",PINA,PINB);
+                break;
+        case 12: sprintf(buff,"PC-%d:PD-%d",PINC,PIND);
+                break;
+ 
+        case 13:sprintf(buff,"EECR-%d:EEARH-%d",EECR,EEARH);
+                break;
+        case 21:sprintf(buff,"CR-%d:CSR-%d",MCUCR,MCUCSR);  
+                break;
+        case 22:sprintf(buff,"SPH-%d:SPL-%d",SPH,SPL);
+                break;
+        case 23:sprintf(buff,"GICR-%d:GIFR-%d",GICR,GIFR); 
+                break;
+        case 31:sprintf(buff,"ACSR%d:OSAL%d",ACSR,OSCCAL);  
+                break;
+
+        case 33:sprintf(buff,"GICR-%d:GIFR-%d",GICR,GIFR); 
+                break; 
+        case 111:sprintf(buff,"UBRRH%d:UCSRC%d",UBRRH,UCSRC); 
+                break;
+        case 122:sprintf(buff,"SREG-%d:SPH-%d",SREG,SPH); 
+                break;  
+        case 61:sprintf(buff,"EECR%d:EEARH%d",EECR,EEARH);
+                break;
+        default:sprintf(buff,"Comm %ld",*comm); 
+    }  
+    LCDprint(buff,sizeof(buff));
+
+	if(_mashine.C_napravlenie == C_DRIVE_VECTOR_Y_UP)
+	{
+        PORTD |= _BV(1);
+		PORTD &= ~_BV(0);
+	}
+	else if(_mashine.C_napravlenie == C_DRIVE_VECTOR_Y_DOWN)
+	{
+
+        PORTD |= _BV(0);
+		PORTD &= ~_BV(1);
+	}
+	else
+	{
+		PORTD &= ~_BV(0);
+		PORTD &= ~_BV(1);
+	}
+    
+}
+
+//=============================================================================
 /* Дескриптор выше - только макет, это заглушает драйверы. Репорт, который его 
  *  описывает, состоит из одного байта неопределенных данных. Мы не передаем
  *  наши данные через HID-репорты, вместо этого мы используем custom-запросы.*/
@@ -117,143 +328,65 @@ usbMsgLen_t usbFunctionSetup(uchar data[8])
 				//LCDstring(rq->wValue.word,32);					
 		}
     }
-	else
-	{
-        /* вызовы запросов USBRQ_HID_GET_REPORT и USBRQ_HID_SET_REPORT не реализованы,
-         *  поскольку мы их не вызываем. Операционная система также не будет обращаться к ним, 
-         *  потому что наш дескриптор не определяет никакого значения.*/
+	else if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS){    /* ?????? HID class */
+        if(rq->bRequest == USBRQ_HID_GET_REPORT){  /* wValue: ReportType (highbyte), ReportID (lowbyte) */
+            /* ????????? ?? ????? ?????? ???? ??? ???????, ?? ????? ???????????? ??????-ID */
+            bytesRemaining = 128;
+            currentAddress = 0;
+            return USB_NO_MSG;  /* ????????????? usbFunctionRead() ??? ????????? ?????? ?????? ?? ?????????? */
+        }else if(rq->bRequest == USBRQ_HID_SET_REPORT){
+            /* ????????? ?? ????? ?????? ???? ??? ???????, ?? ????? ???????????? ??????-ID */
+            bytesRemaining = 128;
+            currentAddress = 0;
+            return USB_NO_MSG;  /* use usbFunctionWrite() ??? ????????? ?????? ??????????? ?? ????? */
+        }
     }
     return 0;   /* default для нереализованных запросов: не возвращаем назад данные хосту */
 }
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
+
+//=============================================================================
+/* usbFunctionRead() usbdrv/usbdrv.h.*/
+uchar   usbFunctionRead(uchar *data, uchar len)
+{
+	PORTC |= _BV(0);
+    if(len > bytesRemaining)
+        len = bytesRemaining;
+    //eeprom_read_block(data, (uchar *)0 + currentAddress, len);
+	memset(data,'A',5);
+    currentAddress += len;
+    bytesRemaining -= len;
+    return len;
+}
+//=============================================================================
+/* usbFunctionWrite()  usbdrv/usbdrv.h. */
+uchar   usbFunctionWrite(uchar *data, uchar len)
+{
+	PORTC |= _BV(0);
+    if(bytesRemaining == 0)
+        return 1;               /* ????????? ???????? */
+    if(len > bytesRemaining)
+        len = bytesRemaining;
+				LCDclr();
+				LCDGotoXY(0,0);	
+				LCDprint(data,len);
+    //eeprom_write_block(data, (uchar *)0 + currentAddress, len);
+    currentAddress += len;
+    bytesRemaining -= len;
+    return bytesRemaining == 0; /* ??????? 1, ???? ??? ??? ????????? ????? */
+}
+//=============================================================================
 //  Function For disable all leds on PORTC
-void DisableLeds(void){    
+void DisableLeds(void)
+{    
     //led1 &=~_BV(0);//=0;
     //PORTC0 =0;
 	//sbi(PORTC,0);
 	//led2 |= _BV(1);//=1;
     //led3 |= _BV(1);//=1;
     //led4 |= _BV(1);// =1;
-    PORTC=0xC4;
-}
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-//  Function For 
-void DoCommand(long int comm)
-{    
-    char buff[BUFF_SIZE];
-    LCDGotoXY(0,1);
-    memset(buff,' ',BUFF_SIZE);
-    switch(comm)  
-    {
-        case 1:	sprintf(buff,"EECR%d:EEARH%d",EECR,EEARH);
-                break;
-        case 2: sprintf(buff,"PA-%d:PB-%d",PINA,PINB);
-                break;
-        case 3: sprintf(buff,"PC-%d:PD-%d",PINC,PIND);
-                break;
-        case 11:sprintf(buff,"UBRRH%d:UCSRC%d",UBRRH,UCSRC); 
-                break;
-        case 12:sprintf(buff,"SREG-%d:SPH-%d",SREG,SPH); 
-                break;   
-        case 13:sprintf(buff,"EECR-%d:EEARH-%d",EECR,EEARH);
-                break;
-        case 21:sprintf(buff,"CR-%d:CSR-%d",MCUCR,MCUCSR);  
-                break;
-        case 22:sprintf(buff,"SPH-%d:SPL-%d",SPH,SPL);
-                break;
-        case 23:sprintf(buff,"GICR-%d:GIFR-%d",GICR,GIFR); 
-                break;
-        case 31:sprintf(buff,"ACSR%d:OSAL%d",ACSR,OSCCAL);  
-                break;
-        case 32:sprintf(buff,"Hello Alexey");
-                break;
-        case 33:sprintf(buff,"GICR-%d:GIFR-%d",GICR,GIFR); 
-                break; 
-        default:sprintf(buff,"Comm %ld",comm); 
-    }  
-    LCDprint(buff,sizeof(buff));
     
-}
-//extern void Nisuy(void);
-//=============================================================================
-int main(void)
-{
-    char command[MAX_COMMAND_SIZE];
-    long prev_comm=0;
-    int command_pos = 0;
-    int del_size = DEL_CYCLE;
-	
-	PORTA=0x00;
-	DDRA=0xff;
-	PORTB=0x01;
-	DDRB=0x01;
-	DDRC=0xC5;
 	PORTC=0xC4;
-
-	GICR|=0x40;
-	MCUCR=0x00;
-	EMCUCR=0x00;
-	GIFR=0x40;
-	TIMSK=0x00;
-
-	ACSR=0x80;
-	SFIOR=0x00;
-	//uchar   i;
-
-    usbInit();
-    usbDeviceDisconnect();  /* принудительно запускаем ре-энумерацию, делайте это, когда прерывания запрещены! */
-	LCDinit();
-    usbDeviceConnect();
-    sei();
-
-	LCDcursorOFF();
-	LCDclr();
-	LCDGotoXY(3,0);
-	LCDprint("Starting...",11);
-	memset(command,' ',MAX_COMMAND_SIZE);
-
-    for(;;){
-        usbPoll();
-        if(command_pos < MAX_COMMAND_SIZE  && (bit_is_clear(PINC,btn1) || bit_is_clear(PINC,btn2) || bit_is_clear(PINC,btn3)))
-		{
-			_delay_ms(del_size*10);
-			if(bit_is_clear(PINC,btn1) && bit_is_clear(PINC,btn2))
-				command[command_pos] = '4';
-			else if(bit_is_clear(PINC,btn1) && bit_is_clear(PINC,btn3))
-				command[command_pos] = '5';
-			else if(bit_is_clear(PINC,btn2) && bit_is_clear(PINC,btn3))
-				command[command_pos] = '6';
-            else if(bit_is_clear(PINC,btn1))
-                command[command_pos] = '1';
-            else if(bit_is_clear(PINC,btn2))
-                command[command_pos] = '2';
-            else
-                command[command_pos] = '3';
-				
-            command_pos++;  
-			LCDGotoXY(0,0);
-			LCDprint(command,sizeof(command));
-			_delay_ms(del_size*30);
-        }                 
-               
-        if(prev_comm)
-                DoCommand(prev_comm);
-        
-        if(bit_is_clear(PINC,btn4))
-		{               
-			LCDclr();
-            prev_comm=  atol(command);
-            DoCommand(prev_comm);    
-            memset(command,' ',MAX_COMMAND_SIZE);
-            command_pos = 0;  
-            _delay_ms(del_size*30);
-        }
-
-		//DisableLeds();
-    }
-    return 0;
 }
-
-/* ------------------------------------------------------------------------- */
+//=============================================================================
+//=============================================================================
+//=============================================================================

@@ -9,7 +9,7 @@ COMPILE = avr-gcc -Wall -Os -gstabs -DF_CPU=$(F_CPU) $(CFLAGS) -mmcu=$(DEVICE)
 help:
 	@echo "This Makefile has no default rule. Use one of the following:"
 	@echo "make hex ....... to build main.hex"
-	@echo "make program ... to flash fuses and firmware"
+	#@echo "make program ... to flash fuses and firmware"
 	#@echo "make fuse ...... to flash the fuses"
 	@echo "make flash ..... to flash the firmware"
 	@echo "make clean ..... to delete objects and hex file"
@@ -20,7 +20,7 @@ program: flash
 
 # правило для прошивки firmware:
 flash: main.hex
-	$(AVRDUDE) -U flash:w:main.hex:i
+	$(AVRDUDE) -U flash:w:default/main.hex:i
 #	$(JTAGICEII) -pf -if main.hex 
 	
 # правило для удаления файлов зависимостей (которые могут быть построены утилитой Make):
@@ -62,8 +62,8 @@ cpp:
 	$(COMPILE) -E main.c
 # правило для программирования бит фьюзов:
 fuse:
-	@[ "$(FUSE_H)" != "" -a "$(FUSE_L)" != "" ] || \
-		{ echo "*** Edit Makefile and choose values for FUSE_L and FUSE_H!"; exit 1; }
+#	@[ "$(FUSE_H)" != "" -a "$(FUSE_L)" != "" ] || \
+#		{ echo "*** Edit Makefile and choose values for FUSE_L and FUSE_H!"; exit 1; }
 #	$(AVRDUDE) -U hfuse:w:$(FUSE_H):m -U lfuse:w:$(FUSE_L):m
-	$(JTAGICEII) -f 0x$(FUSE_H)$(FUSE_L) 
+#	$(JTAGICEII) -f 0x$(FUSE_H)$(FUSE_L) 
 	
