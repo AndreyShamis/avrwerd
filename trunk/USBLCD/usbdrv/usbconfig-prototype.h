@@ -1,14 +1,3 @@
-/* Имя: usbconfig.h
- * Проект: драйвер AVR USB
- * Автор: Christian Starkjohann
- * Перевод: microsin.ru  
- * Дата создания: 2005-04-01
- * Табуляция: 4
- * Copyright: (c) 2005 by OBJECTIVE DEVELOPMENT Software GmbH
- * Лицензия: GNU GPL v2 (см. License.txt) или проприетарная (CommercialLicense.txt) 
- * Ревизия: $Id: usbconfig-prototype.h 600 2008-05-13 10:34:56Z cs $
- */
-
 #ifndef __usbconfig_h_included__
 #define __usbconfig_h_included__
 

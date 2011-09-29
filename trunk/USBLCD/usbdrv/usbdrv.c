@@ -235,7 +235,7 @@ char    i;
     }while(--i > 0);            /* управление циклом в конце составляет на 2 байта короче, чем в начале */
     usbCrc16Append(&txStatus->buffer[1], len);
     txStatus->len = len + 4;    /* len должна включать байт синхронизации (sync byte) */
-    DBG2(0x21 + (((int)txStatus >> 3) & 3), txStatus->buffer, len + 3);
+//    DBG2(0x21 + (((int)txStatus >> 3) & 3), txStatus->buffer, len + 3);
 }
 
 USB_PUBLIC void usbSetInterrupt(uchar *data, uchar len)
