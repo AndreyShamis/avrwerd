@@ -123,7 +123,7 @@ void therm_read_temperature(char *buffer)
 	if(neg>0)sprintf(buffer, "-%d.%01uC", digit, decimal/1000);
 }
 
-tempra(void){
+int tempra(void){
 return  tempt;
 }
 

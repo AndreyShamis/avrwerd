@@ -26,13 +26,13 @@
 #define THERM_DECIMAL_STEPS_12BIT 625 //.0625
 
 
-
-void therm_delay(uint16_t delay);
+int 	tempra(void);
+void 	therm_delay(uint16_t delay);
 uint8_t therm_reset();
-void therm_write_bit(uint8_t bit);
+void 	therm_write_bit(uint8_t bit);
 uint8_t therm_read_bit(void);
 uint8_t therm_read_byte(void);
-void therm_write_byte(uint8_t byte);
+void 	therm_write_byte(uint8_t byte);
 //
-void therm_read_temperature(char *buffer);
-void therm_read_temperature2(int8_t *digi, uint16_t *deci);
+void 	therm_read_temperature(char *buffer);
+void 	therm_read_temperature2(int8_t *digi, uint16_t *deci);
