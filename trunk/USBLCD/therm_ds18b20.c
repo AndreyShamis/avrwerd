@@ -2,7 +2,7 @@
 
 #include <util/delay.h>	//Header for _delay_ms()
 
-int tempt=0;
+//int tempt=0;
 uint8_t therm_reset()
 {
 	uint8_t i;
@@ -76,12 +76,12 @@ void therm_write_byte(uint8_t byte)
 void therm_read_temperature(char *buffer)
 {
 	// Buffer length must be at least 12bytes long! ["+XXX.XXXX C"]
-	uint8_t temperature[2];
-	int8_t digit;
-	int tall=0;
-	int tall2=0;
-	int neg=0;
-	uint16_t decimal;
+	uint8_t 	temperature[2];
+	int8_t 		digit;
+	int 		tall=0;
+	int 		tall2=0;
+	int 		neg=0;
+	uint16_t 	decimal;
 	//Reset, skip ROM and start temperature conversion
 	therm_reset();
 	therm_write_byte(THERM_CMD_SKIPROM);
@@ -98,10 +98,10 @@ void therm_read_temperature(char *buffer)
 	therm_reset();
 	//Store temperature integer digits and decimal digits
 
-    neg =0;
-	tall=temperature[0];
-	tall2=temperature[1];
-	tempt=tall2*256+tall;
+    //neg =0;					//	Defined as 0 on start
+	tall	=	temperature[0];
+	tall2	=	temperature[1];
+//	tempt=tall2*256+tall;
 	tall2=tall2%16;
 	tall2 =tall2*16;
 	//if (tall2>0){tall2=128;}
@@ -110,23 +110,39 @@ void therm_read_temperature(char *buffer)
 	decimal=10000/16*(tall%16);
 	//if(decimal>1){decimal=1;}
 	digit=tall/16+tall2;
-	if(digit<0){decimal = 10000-decimal;neg = 1;}
-	if(decimal==10000){decimal=0;}
-    if(decimal>0&neg==1){digit=digit+1;}
-	if(neg==1){digit=digit*(-1);}
+	if(digit<0)
+	{
+		decimal = 10000-decimal;
+		neg = 1;
+	}
+	if(decimal==10000)
+		decimal=0;
+    if(decimal>0 && neg)
+		digit=digit+1;
+	if(neg)
+		digit=digit*(-1);
 
 	//tempt=digit*16;
 
 	//tempt=tempt+tall%16;
 	
-	if(neg<1)sprintf(buffer, "%+d.%01uC", digit, decimal/1000);
-	if(neg>0)sprintf(buffer, "-%d.%01uC", digit, decimal/1000);
+	char plus_minus;
+	if(neg)
+		plus_minus = '-';
+	else
+		plus_minus = '+';
+		
+	sprintf(buffer, "%c%d.%02uC",plus_minus, digit, decimal/100);
+		//sprintf(buffer, "%+d.%02uC", digit, decimal/100);
+
 }
 
-int tempra(void){
-return  tempt;
-}
+//int tempra(void)
+//{
+//return  tempt;
+//}
 
+#ifdef THEMP2_USE
 void therm_read_temperature2(int8_t *digi, uint16_t *deci)
 {
 	// Buffer length must be at least 12bytes long! ["+XXX.XXXX C"]
@@ -157,4 +173,4 @@ void therm_read_temperature2(int8_t *digi, uint16_t *deci)
 	*digi = digit;
 	*deci = decimal;
 }
-
+#endif

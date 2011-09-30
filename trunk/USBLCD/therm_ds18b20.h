@@ -5,6 +5,8 @@
 #define THERM_PIN PINB
 #define THERM_DQ PB2
 
+//#define THEMP2_USE				//	FOR use second function uncoment it
+
 /* Utils */
 #define THERM_INPUT_MODE() THERM_DDR&=~(1<<THERM_DQ)
 #define THERM_OUTPUT_MODE() THERM_DDR|=(1<<THERM_DQ)
@@ -26,7 +28,7 @@
 #define THERM_DECIMAL_STEPS_12BIT 625 //.0625
 
 
-int 	tempra(void);
+//int 	tempra(void);
 void 	therm_delay(uint16_t delay);
 uint8_t therm_reset();
 void 	therm_write_bit(uint8_t bit);
@@ -35,4 +37,6 @@ uint8_t therm_read_byte(void);
 void 	therm_write_byte(uint8_t byte);
 //
 void 	therm_read_temperature(char *buffer);
+#ifdef THEMP2_USE
 void 	therm_read_temperature2(int8_t *digi, uint16_t *deci);
+#endif

@@ -10,35 +10,18 @@
 #include <inttypes.h>
 #include <avr/wdt.h>
 #include <avr/interrupt.h>  // дл€ sei() 
-#include <util/delay.h>    // дл€ _delay_ms() 
-
+#include <util/delay.h>    	// дл€ _delay_ms() 
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
 #include "therm_ds18b20.h"
-
-char ch = 0;
-int t;
-int start =0 ;
-int l=0;
-int h=0;
-
 #include <avr/pgmspace.h>   // нужен дл€ usbdrv.h 
 #include "usbdrv/usbdrv.h"
 #include "requests.h"       // номера custom request, используемые нами 
 #include "avr_compat.h"
 #include "lcd_lib.h" 
 //=============================================================================
-//=============================================================================
-//=============================================================================
-
-#define DEL_START           5//*8  //  delay leds start
-#define DEL_CYCLE           5//*8  //  delay in each cycle        
-#define MAX_COMMAND_SIZE    6   //  Max command size
-
-#define BUFF_SIZE           17
-
+//-------------------------- DEFINE SECTION -----------------------------------
 #define btn1 1
 #define btn2 3
 #define btn3 5
@@ -47,23 +30,19 @@ int h=0;
 #define led2 2	//PORTC2
 #define led3 6	//PORTC6
 #define led4 7	//PORTC7
-
+#define DEL_START           5//*8  	//  delay leds start
+#define DEL_CYCLE           5//*8  	//  delay in each cycle        
+#define MAX_COMMAND_SIZE    6   	//  Max command size
+#define BUFF_SIZE           17
+#define TEMP_VALUE_SIZE		10
 //#define PortaBits (*((volatile Bits*)&PORTA))
 //#define LedPin PortaBits.Bit5
-
-
 #define C_DRIVE_VECTOR_Y_UP		1
 #define C_DRIVE_VECTOR_Y_DOWN	2
+
 //=============================================================================
-//=============================================================================
 
-
-
-//  Function For 
-void DoCommand(long *comm);
-void DisableLeds(void);
-static uchar    currentAddress;
-static uchar    bytesRemaining;
+//--------------------------- STRUCT SECTION ----------------------------------
 struct MashineStatus
 {
 	char	C_napravlenie;
@@ -72,24 +51,34 @@ struct MashineStatus
 
 };
 
-static struct MashineStatus _mashine;
-
 //=============================================================================
-// usbFunctionWrite()  usbdrv/usbdrv.h. 
+
+//-------------------------- FUNCTION DECLARATION -----------------------------
+//=============================================================================
+//  Function For 
+void DoCommand(long *comm);
+//=============================================================================
+//  Function For 
+void DisableLeds(void);
+//=============================================================================
 uchar   usbFunctionWrite(uchar *data, uchar len);
 //=============================================================================
-// usbFunctionRead() usbdrv/usbdrv.h.
 uchar   usbFunctionRead(uchar *data, uchar len);
 //=============================================================================
-// ƒескриптор выше - только макет, это заглушает драйверы. –епорт, который его 
-//   описывает, состоит из одного байта неопределенных данных. ћы не передаем
-//   наши данные через HID-репорты, вместо этого мы используем custom-запросы.
 // ------------------------------------------------------------------------- 
 usbMsgLen_t usbFunctionSetup(uchar data[8]);
 
 //=============================================================================
-//=============================================================================
-// ----------------------------- интерфейс USB ----------------------------- 
+
+//--------------------------  VARIABLE DECLARATION ----------------------------
+char 	buff[BUFF_SIZE];
+char 	tempValue[TEMP_VALUE_SIZE] = {0};
+
+static uchar    currentAddress;
+static uchar    bytesRemaining;
+
+
+static struct MashineStatus _mashine;
 
 PROGMEM char usbHidReportDescriptor[22] = {    // дескриптор репорта USB 
     0x06, 0x00, 0xff,              // USAGE_PAGE (Generic Desktop)
@@ -105,15 +94,14 @@ PROGMEM char usbHidReportDescriptor[22] = {    // дескриптор репорта USB
 };
 
 //=============================================================================
-//=============================================================================
-//=============================================================================
+//-------------------------- MAIN SETION --------------------------------------
 int main(void)
 {
-    char command[MAX_COMMAND_SIZE];
-    long  	prev_comm		=	0;
-    int 	command_pos 	= 	0;
-    int 	del_size 		= 	DEL_CYCLE;
-	int 	lcd_update_time	=	30;
+    char 		command[MAX_COMMAND_SIZE];
+    long  		prev_comm		=	0;
+    int 		command_pos 	= 	0;
+    int 		del_size 		= 	DEL_CYCLE;
+	int 		lcd_update_time	=	30;
 
 	PORTA	=	0x00;
 	DDRA	=	0xff;
@@ -134,12 +122,8 @@ int main(void)
 	SFIOR	=0x00;
 
 
-
-
-	//uchar   i;
-
     usbInit();
-    usbDeviceDisconnect();  /* принудительно запускаем ре-энумерацию, делайте это, когда прерывани€ запрещены! */
+    usbDeviceDisconnect();  // принудительно запускаем ре-энумерацию, делайте это, когда прерывани€ запрещены! 
 	LCDinit();
     usbDeviceConnect();
     sei();
@@ -150,44 +134,9 @@ int main(void)
 	LCDGotoXY(3,0);
 	LCDprint("Starting...",11);
 	memset(command,' ',MAX_COMMAND_SIZE);
-   	char buff[BUFF_SIZE];
-	int i=0;
-	char x[20] = {0};
+	
 	for(;;){
         usbPoll();
-
-		i = (i+1)%10;
-
-		if(i == 5)
-		{
-
-			therm_read_temperature(x);
-			t=tempra();
-			if (start==0)
-			{
-				l=t;
-				h=t;
-			}
-	        start=10;
-			if(t>h){h=t;}
-	        if(t<l){l=t;}
-		    LCDGotoXY(0,0);
-			sprintf(buff,"T%s[%x]h %x l %x",x,t,h,l);
-			LCDprint(buff,sizeof(buff));		
-			//	lcd_string2("T=%s[%x]\nh %x l %x",x,t,h,l);
-	   		t=tempra();
-	   		//int tt;
-			//for (tt=0;tt<5;tt++) //some delay
-			//	_delay_ms(100);
-			if (i%2)
-			{
-				PORTB |= 1;
-			}
-			else
-			{
-				PORTB &= 0xFE;
-			}
-		}
 
         if(command_pos < MAX_COMMAND_SIZE  && (bit_is_clear(PINC,btn1) || bit_is_clear(PINC,btn2) || bit_is_clear(PINC,btn3)))
 		{
@@ -241,7 +190,7 @@ int main(void)
 //  Function For 
 void DoCommand(long *comm)
 {    
-    char buff[BUFF_SIZE];
+    //char buff[BUFF_SIZE];
     LCDGotoXY(0,1);
     memset(buff,' ',BUFF_SIZE);
     switch(*comm)  
@@ -283,6 +232,12 @@ void DoCommand(long *comm)
         case 61:sprintf(buff,"EECR%d:EEARH%d",EECR,EEARH);
                 break;
         case 589:sprintf(buff,"Error On Temp.");
+                break;
+        case 1213:
+				therm_read_temperature(tempValue);
+			    LCDGotoXY(6,0);
+				sprintf(buff,"T:%s",tempValue);		//	sprintf(buff,"T%s[%x]h %x l %x",x,t,h,l);
+				LCDprint(buff,sizeof(buff));
                 break;
         default:sprintf(buff,"Comm %ld",*comm); 
     }  
@@ -439,3 +394,37 @@ int main()
 */
 
 //=============================================================================
+/*
+DALLAS THERMOMETER MANIPULATION
+		i = (i+1)%10;
+
+		if(i == 5)
+		{
+
+			therm_read_temperature(x);
+		//	t=tempra();
+		//	if (start==0)
+		//	{
+		//		l=t;
+		//		h=t;
+		//	}
+	       // start=10;
+		//	if(t>h){h=t;}
+	       // if(t<l){l=t;}
+		    LCDGotoXY(0,0);
+			sprintf(buff,"T:%s",x);		//	sprintf(buff,"T%s[%x]h %x l %x",x,t,h,l);
+			LCDprint(buff,sizeof(buff));		
+	   		//t=tempra();
+	   		//int tt;
+			//for (tt=0;tt<5;tt++) //some delay
+			//	_delay_ms(100);
+			//if (i%2)
+			//{
+		//		PORTB |= 1;
+		//	}
+		//	else
+		//	{
+		//		PORTB &= 0xFE;
+		//	}
+		}
+*/
