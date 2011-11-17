@@ -2,11 +2,11 @@
 	.include "m8515def.inc"
 	.include "macro.inc"
 //=============================================================================
-	.DSEG
+	.DSEG		//	OPERATIVKA
 	
-	.ORG SRAM_START+4
-Var1:	.byte	3
-Var2:	.byte	2
+	//.ORG SRAM_START+4
+	//Var1:	.byte	3
+	//Var2:	.byte	2
 //=============================================================================
 	.CSEG
 		.equ	Delay	=	3

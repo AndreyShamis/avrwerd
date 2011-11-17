@@ -1,14 +1,3 @@
-/* Имя: iarcompat.h
- * Проект: AVR USB driver
- * Автор: Christian Starkjohann
- * Перевод: microsin.ru 
- * Дата создания: 2006-03-01
- * Табуляция: 4
- * Copyright: (c) 2006 by OBJECTIVE DEVELOPMENT Software GmbH
- * Лицензия: GNU GPL v2 (см. License.txt) или проприетарная (CommercialLicense.txt)
- * Ревизия: $Id: iarcompat.h 533 2008-02-28 15:35:25Z cs $
- */
-
 /*
 Основное описание:
 Этот заголовочный файл включается, когда мы компилируем с IAR C-компилятором и ассемблером.
