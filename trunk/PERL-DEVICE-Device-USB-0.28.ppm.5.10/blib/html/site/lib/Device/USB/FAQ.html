@@ -1,0 +1,200 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<link rel="stylesheet" type="text/css" href="../../../../scineplex.css">
+<title>Device::USB::FAQ - Frequently Asked Questions for Device::USB</title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<script>writelinks('__top__',4);</script>
+<h1><a>Device::USB::FAQ - Frequently Asked Questions for Device::USB</a></h1>
+<p><a name="__index__"></a></p>
+
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#questions">QUESTIONS</a></li>
+	<ul>
+
+		<li><a href="#which_platforms_does_device__usb_support">Which platforms does Device::USB support?</a></li>
+		<li><a href="#do_i_have_to_use_device__usb_as_root">Do I have to use Device::USB as root?</a></li>
+		<li><a href="#how_do_i_enable_use_of_device__usb_as_a_non_root_user">How do I enable use of Device::USB as a non-root user?</a></li>
+		<ul>
+
+			<li><a href="#devfs___hotplug">DEVFS / HOTPLUG</a></li>
+			<li><a href="#udev">UDEV</a></li>
+			<li><a href="#usbfs">USBFS</a></li>
+		</ul>
+
+	</ul>
+
+	<li><a href="#see_also">SEE ALSO</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#acknowledgements">ACKNOWLEDGEMENTS</a></li>
+	<li><a href="#copyright___license">COPYRIGHT &amp; LICENSE</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>Device::USB::FAQ - Frequently Asked Questions for Device::USB</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p>perldoc Device::USB::FAQ</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>This is an attempt to answer some of the frequently asked questions about
+the Device::USB module</p>
+<p>
+</p>
+<hr />
+<h1><a name="questions">QUESTIONS</a></h1>
+<p>
+</p>
+<h2><a name="which_platforms_does_device__usb_support">Which platforms does Device::USB support?</a></h2>
+<p><code>Device:USB</code> supports any platform that <code>libusb</code> supports. This list
+currently includes Linux, FreeBSD, NetBSD, OpenBSD, Darwin, and MacOS X.</p>
+<p>There is a port of the <code>libusb</code> library to the Windows environment called
+<code>LibUsb-Win32</code>. Because I don't have a development environment for testing
+this library, <code>Device::USB</code> does not yet support this library.</p>
+<p>
+</p>
+<h2><a name="do_i_have_to_use_device__usb_as_root">Do I have to use Device::USB as root?</a></h2>
+<p>By default, access to the USB devices on a Unix-based system appear to be
+limited to the root account. This usually causes access to most of the
+<code>libusb</code> features to fail with a permission error.</p>
+<p>Using the <code>Device::USB</code> module as root avoids this feature, but is not
+very satisfying from a security standpoint. (See the next question for
+more options.)</p>
+<p>
+</p>
+<h2><a name="how_do_i_enable_use_of_device__usb_as_a_non_root_user">How do I enable use of Device::USB as a non-root user?</a></h2>
+<p>Some of the attributes of USB devices are available to non-root users, but
+accessing many of the more interesting features require special privileges.
+According to the libusb source, the <a href="../../../../lib/pods/perlfunc.html#open"><code>open()</code></a> function requires either device
+nodes to be present or the usbfs file system to be mounted in specific
+locations. Those places in order are:</p>
+<ol>
+<li><strong><a name="_" class="item">)</a></strong>
+
+<p><em class="file">/dev/bus/usb</em>  - pre-2.6.11: via devfs / post-2.6.11: via udev</p>
+</li>
+<li><strong><a name="_2" class="item">)</a></strong>
+
+<p><em class="file">/proc/bus/usb</em> - usbfs</p>
+</li>
+</ol>
+<p>Look in both locations on your system for which of these two methods your
+libusb will use.</p>
+<p>No matter which method your system uses, you will probably want to create a
+separate group to control access. Run this command to add a system group:</p>
+<pre>
+  addgroup --system usb</pre>
+<p>or</p>
+<pre>
+  groupadd --system usb</pre>
+<p>You can then add users to that group to allow access to your usb devices.</p>
+<p>
+</p>
+<h3><a name="devfs___hotplug">DEVFS / HOTPLUG</a></h3>
+<p>TODO</p>
+<p>
+</p>
+<h3><a name="udev">UDEV</a></h3>
+<p>If you use Debian/Ubuntu, look in the <em class="file">/etc/udev/permissions.rules</em> file.
+If you want to allow global access to all usb devices, make this change:</p>
+<p>Change this:
+  SUBSYSTEM==&quot;usb_device&quot;, MODE=&quot;0664&quot;</p>
+<p>To this:
+  SUBSYSTEM==&quot;usb_device&quot;, MODE=&quot;0664&quot;, GROUP=&quot;usb&quot;</p>
+<p>After you reboot, all usb devices will inherit the mode and group specified.</p>
+<p>If you want to only change permissions for certain devices, you can add this
+on one line and adjust the product and vendor IDs:</p>
+<pre>
+  <span class="variable">SUBSYSTEM</span><span class="operator">==</span><span class="string">"usb_device"</span><span class="operator">,</span> <span class="variable">GROUP</span><span class="operator">=</span><span class="string">"usb"</span><span class="operator">,</span> <span class="operator">\</span>
+    <span class="variable">SYSFS</span><span class="operator">{</span><span class="variable">idVendor</span><span class="operator">}==</span><span class="string">"1234"</span><span class="operator">,</span> <span class="variable">SYSFS</span><span class="operator">{</span><span class="variable">idProduct</span><span class="operator">}==</span><span class="string">"1234"</span>
+</pre>
+<p>
+</p>
+<h3><a name="usbfs">USBFS</a></h3>
+<p>The usbfs defaults to root as the user and group. This can be changed in the
+<em class="file">/etc/fstab</em> by adding the following on one line:</p>
+<pre>
+  none /proc/bus/usb usbfs noauto,\
+      listuid=0,listgid=118,listmode=0664,\
+      busuid=0,busgid=118,busmode=0775,\
+      devuid=0,devgid=118,devmode=0664\
+      0 0</pre>
+<p>The value <code>118</code> in the above should be replaced with the group id of
+your usb group (created above). The list* values are to allow listing
+devices, the bus* is to control access to the bus directories and the
+dev* values control access to the device files. This approach does not
+allow the kind of granular permission that the udev approach gives, so
+it is all or nothing unless permissions are changed programmatically.</p>
+<p>If your <em class="file">/etc/fstab</em> file already has a line for <em class="file">/proc/bus/usb</em>, add the
+options above to the line that is already there rather than adding the
+new line. For example, you would change</p>
+<pre>
+  usbfs   /proc/bus/usb   usbfs   noauto  0 0</pre>
+<p>to</p>
+<pre>
+  usbfs   /proc/bus/usb   usbfs  noauto,\
+      listuid=0,listgid=118,listmode=0664,\
+      busuid=0,busgid=118,busmode=0775,\
+      devuid=0,devgid=118,devmode=0664\
+      0 0</pre>
+<p>Once again, this needs to be all on one line with the <code>\</code> characters
+removed.</p>
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<p>Device::USB and the <code>libusb</code> library site at
+<a href="http://libusb.sourceforge.net/">http://libusb.sourceforge.net/</a>.</p>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>G. Wade Johnson (wade at anomaly dot org)
+Paul Archer (paul at paularcher dot org)</p>
+<p>Houston Perl Mongers Group</p>
+<p>
+</p>
+<hr />
+<h1><a name="acknowledgements">ACKNOWLEDGEMENTS</a></h1>
+<p>Thanks go to various users who submitted questions and answers for the
+list. In particular, Anthony L. Awtrey who contributed the first FAQ answer.</p>
+<p>
+</p>
+<hr />
+<h1><a name="copyright___license">COPYRIGHT &amp; LICENSE</a></h1>
+<p>Copyright 2006 Houston Perl Mongers</p>
+<p>This document is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.</p>
+
+</body>
+
+</html>

@@ -1,0 +1,163 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<link rel="stylesheet" type="text/css" href="../../../../scineplex.css">
+<title>Device::USB::DevEndpoint - Access a device endpoint returned by libusb.</title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<script>writelinks('__top__',4);</script>
+<h1><a>Device::USB::DevEndpoint - Access a device endpoint returned by libusb.</a></h1>
+<p><a name="__index__"></a></p>
+
+
+<ul>
+
+	<li><a href="#device__usb__devendpoint">Device::USB::DevEndpoint</a></li>
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#version">VERSION</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#methods">METHODS</a></li>
+	</ul>
+
+	<li><a href="#diagnostics">DIAGNOSTICS</a></li>
+	<li><a href="#dependencies">DEPENDENCIES</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#bugs">BUGS</a></li>
+	<li><a href="#acknowledgements">ACKNOWLEDGEMENTS</a></li>
+	<li><a href="#copyright___license">COPYRIGHT &amp; LICENSE</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<h1><a name="device__usb__devendpoint">Device::USB::DevEndpoint</a></h1>
+<p>This class encapsulates a USB Device endpoint and the methods that object
+would support.</p>
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>Device::USB::DevEndpoint - Access a device endpoint returned by libusb.</p>
+<p>
+</p>
+<hr />
+<h1><a name="version">VERSION</a></h1>
+<p>Version 0.11</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p>Device::USB:DevEndpoint provides a Perl object for accessing an endpoint
+of an interface of a USB device using the libusb library.</p>
+<pre>
+    <span class="keyword">use</span> <span class="variable">Device::USB</span><span class="operator">;</span>
+</pre>
+<pre>
+    <span class="keyword">my</span> <span class="variable">$usb</span> <span class="operator">=</span> <span class="variable">Device::USB</span><span class="operator">-&gt;</span><span class="variable">new</span><span class="operator">();</span>
+    <span class="keyword">my</span> <span class="variable">$dev</span> <span class="operator">=</span> <span class="variable">$usb</span><span class="operator">-&gt;</span><span class="variable">find_device</span><span class="operator">(</span> <span class="variable">$VENDOR</span><span class="operator">,</span> <span class="variable">$PRODUCT</span> <span class="operator">);</span>
+</pre>
+<pre>
+    <span class="keyword">printf</span> <span class="string">"Device: %04X:%04X\n"</span><span class="operator">,</span> <span class="variable">$dev</span><span class="operator">-&gt;</span><span class="variable">idVendor</span><span class="operator">(),</span> <span class="variable">$dev</span><span class="operator">-&gt;</span><span class="variable">idProduct</span><span class="operator">();</span>
+    <span class="variable">$dev</span><span class="operator">-&gt;</span><span class="keyword">open</span><span class="operator">();</span>
+</pre>
+<pre>
+    <span class="keyword">my</span> <span class="variable">$cfg</span> <span class="operator">=</span> <span class="variable">$dev</span><span class="operator">-&gt;</span><span class="variable">config</span><span class="operator">()-&gt;</span><span class="operator">[</span><span class="number">0</span><span class="operator">]</span><span class="operator">;</span>
+    <span class="keyword">my</span> <span class="variable">$inter</span> <span class="operator">=</span> <span class="variable">$cfg</span><span class="operator">-&gt;</span><span class="variable">interfaces</span><span class="operator">()-&gt;</span><span class="operator">[</span><span class="number">0</span><span class="operator">]</span><span class="operator">-&gt;</span><span class="operator">[</span><span class="number">0</span><span class="operator">]</span><span class="operator">;</span>
+    <span class="keyword">my</span> <span class="variable">$ep</span> <span class="operator">=</span> <span class="variable">$inter</span><span class="operator">-&gt;</span><span class="variable">endpoints</span><span class="operator">()-&gt;</span><span class="operator">[</span><span class="number">0</span><span class="operator">]</span><span class="operator">;</span>
+    <span class="keyword">print</span> <span class="string">"Endpoint:"</span><span class="operator">,</span> <span class="variable">$inter</span><span class="operator">-&gt;</span><span class="variable">bEndpointAddress</span><span class="operator">(),</span>
+       <span class="string">" name: "</span><span class="operator">,</span> <span class="variable">$dev</span><span class="operator">-&gt;</span><span class="variable">get_string_simple</span><span class="operator">(</span><span class="variable">$iter</span><span class="operator">-&gt;</span><span class="variable">iInterface</span><span class="operator">()),</span> <span class="string">"\n"</span><span class="operator">;</span>
+</pre>
+<p>See USB specification for an explanation of the attributes of an
+endpoint.</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>This module defines a Perl object that represents the data associated with
+a USB interface endpoint. The object provides read-only access to the
+important data associated with the endpoint.</p>
+<p>
+</p>
+<h2><a name="methods">METHODS</a></h2>
+<p>There are several accessor methods that return data from the interface.
+Each is named after the field that they return. These accessors include:</p>
+<dl>
+<dt><strong><a name="bendpointaddress" class="item">bEndpointAddress</a></strong>
+
+<dt><strong><a name="bmattributes2" class="item">bmAttributes</a></strong>
+
+<dt><strong><a name="wmaxpacketsize" class="item">wMaxPacketSize</a></strong>
+
+<dt><strong><a name="binterval" class="item">bInterval</a></strong>
+
+<dt><strong><a name="brefresh" class="item">bRefresh</a></strong>
+
+<dt><strong><a name="bsynchaddress" class="item">bSynchAddress</a></strong>
+
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="diagnostics">DIAGNOSTICS</a></h1>
+<p>This is an explanation of the diagnostic and error messages this module
+can generate.</p>
+<p>
+</p>
+<hr />
+<h1><a name="dependencies">DEPENDENCIES</a></h1>
+<p>This module depends on the Carp, Inline and Inline::C modules, as well as
+the strict and warnings pragmas. Obviously, libusb must be available since
+that is the entire reason for the module's existence.</p>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>G. Wade Johnson (wade at anomaly dot org)
+Paul Archer (paul at paularcher dot org)</p>
+<p>Houston Perl Mongers Group</p>
+<p>
+</p>
+<hr />
+<h1><a name="bugs">BUGS</a></h1>
+<p>Please report any bugs or feature requests to
+<code>bug-device-usb@rt.cpan.org</code>, or through the web interface at
+<a href="http://rt.cpan.org/NoAuth/ReportBug.html?Device::USB">http://rt.cpan.org/NoAuth/ReportBug.html</a>.
+I will be notified, and then you'll automatically be notified of progress on
+your bug as I make changes.</p>
+<p>
+</p>
+<hr />
+<h1><a name="acknowledgements">ACKNOWLEDGEMENTS</a></h1>
+<p>Thanks go to various members of the Houston Perl Mongers group for input
+on the module. But thanks mostly go to Paul Archer who proposed the project
+and helped with the development.</p>
+<p>
+</p>
+<hr />
+<h1><a name="copyright___license">COPYRIGHT &amp; LICENSE</a></h1>
+<p>Copyright 2006 Houston Perl Mongers</p>
+<p>This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.</p>
+
+</body>
+
+</html>

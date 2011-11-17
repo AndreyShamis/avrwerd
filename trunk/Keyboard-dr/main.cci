@@ -1,0 +1,7 @@
+VERSION:3 SOURCE_TIMESTAMP:3F4C9308
+NODE:I LEVEL:0 LINE:14 "E:\cvavr2\inc\io.h"
+NODE:I LEVEL:0 LINE:15 "E:\cvavr2\inc\delay.h"
+NODE:I LEVEL:0 LINE:16 "J:\avr_proj\CodeVision\Keyboard-dr\keyboard.h"
+NODE:I LEVEL:0 LINE:17 "J:\avr_proj\CodeVision\Keyboard-dr\lcd_lib.h"
+NODE:V LEVEL:0 LINE:19 "buf -> R6"
+NODE:F LEVEL:0 LINE:21 "main(void)"

@@ -1,0 +1,198 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<link rel="stylesheet" type="text/css" href="../../../../scineplex.css">
+<title>Device::USB::Bus - Use libusb to access USB devices.</title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<script>writelinks('__top__',4);</script>
+<h1><a>Device::USB::Bus - Use libusb to access USB devices.</a></h1>
+<p><a name="__index__"></a></p>
+
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#version">VERSION</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#functions">FUNCTIONS</a></li>
+	<li><a href="#diagnostics">DIAGNOSTICS</a></li>
+	<li><a href="#dependencies">DEPENDENCIES</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#bugs">BUGS</a></li>
+	<li><a href="#acknowledgements">ACKNOWLEDGEMENTS</a></li>
+	<li><a href="#copyright___license">COPYRIGHT &amp; LICENSE</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>Device::USB::Bus - Use libusb to access USB devices.</p>
+<p>
+</p>
+<hr />
+<h1><a name="version">VERSION</a></h1>
+<p>Version 0.12</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p>This class encapsulates the USB bus structure and provides methods for
+retrieving data from it. This class is not meant to be used alone, it is
+part of the Device::USB package.</p>
+<p>Device:USB:LibUSB provides a Perl wrapper around the libusb library. This
+supports Perl code controlling and accessing USB devices.</p>
+<pre>
+    <span class="keyword">use</span> <span class="variable">Device::USB</span><span class="operator">;</span>
+</pre>
+<pre>
+    <span class="keyword">my</span> <span class="variable">$usb</span> <span class="operator">=</span> <span class="variable">Device::USB</span><span class="operator">-&gt;</span><span class="variable">new</span><span class="operator">();</span>
+</pre>
+<pre>
+    <span class="keyword">foreach</span> <span class="keyword">my</span> <span class="variable">$bus</span> <span class="operator">(</span><span class="variable">$usb</span><span class="operator">-&gt;</span><span class="variable">list_busses</span><span class="operator">())</span>
+    <span class="operator">{</span>
+        <span class="keyword">print</span> <span class="variable">$bus</span><span class="operator">-&gt;</span><span class="variable">dirname</span><span class="operator">(),</span> <span class="string">":\n"</span><span class="operator">;</span>
+        <span class="keyword">foreach</span> <span class="keyword">my</span> <span class="variable">$dev</span> <span class="operator">(</span><span class="variable">$bus</span><span class="operator">-&gt;</span><span class="variable">devices</span><span class="operator">())</span>
+        <span class="operator">{</span>
+            <span class="keyword">print</span> <span class="string">"\t"</span><span class="operator">,</span> <span class="variable">$dev</span><span class="operator">-&gt;</span><span class="variable">filename</span><span class="operator">(),</span> <span class="string">"\n"</span><span class="operator">;</span>
+        <span class="operator">}</span>
+    <span class="operator">}</span>
+</pre>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>This module provides a Perl interface to the bus structures returned by the
+libusb library. This library supports a read-only interface to the data libusb
+returns about a USB bus.</p>
+<p>
+</p>
+<hr />
+<h1><a name="functions">FUNCTIONS</a></h1>
+<dl>
+<dt><strong><a name="dirname" class="item">dirname</a></strong>
+
+<dd>
+<p>Return the directory name associated with this bus.</p>
+</dd>
+</li>
+<dt><strong><a name="location" class="item">location</a></strong>
+
+<dd>
+<p>Return the location value associated with this bus.</p>
+</dd>
+</li>
+<dt><strong><a name="devices" class="item">devices</a></strong>
+
+<dd>
+<p>In array context, it returns a list of Device::USB::Device objects
+representing all of the devices on this bus. In scalar context, it returns a
+reference to that array.</p>
+</dd>
+</li>
+<dt><strong><a name="find_device_if" class="item">find_device_if</a></strong>
+
+<dd>
+<p>Find a particular USB device based on the supplied predicate coderef. If
+more than one device would satisfy the predicate, the first one found is
+returned.</p>
+</dd>
+<dl>
+<dt><strong><a name="pred" class="item">pred</a></strong>
+
+<dd>
+<p>the predicate used to select a device</p>
+</dd>
+</li>
+</dl>
+<p>returns a device reference or undef if none was found.</p>
+<dt><strong><a name="list_devices_if_this_method_provides_a_flexible_interface_for_finding_devices_it_takes_a_single_coderef_parameter_that_is_used_to_test_each_discovered_device_if_the_coderef_returns_a_true_value_the_device_is_returned_in_the_list_of_matching_devices_otherwise_it_is_not" class="item">list_devices_if
+This method provides a flexible interface for finding devices. It
+takes a single coderef parameter that is used to test each discovered
+device. If the coderef returns a true value, the device is returned in the
+list of matching devices, otherwise it is not.</a></strong>
+
+<dl>
+<dt><strong>pred</strong>
+
+<dd>
+<p>coderef to test devices.</p>
+</dd>
+</li>
+</dl>
+<p>For example,</p>
+<pre>
+    <span class="keyword">my</span> <span class="variable">@devices</span> <span class="operator">=</span> <span class="variable">$bus</span><span class="operator">-&gt;</span><span class="variable">list_devices_if</span><span class="operator">(</span>
+        <span class="keyword">sub</span><span class="variable"> </span><span class="operator">{</span> <span class="variable">Device::USB::CLASS_HUB</span> <span class="operator">==</span> <span class="variable">$_</span><span class="operator">-&gt;</span><span class="variable">bDeviceClass</span><span class="operator">()</span> <span class="operator">}</span>
+    <span class="operator">);</span>
+</pre>
+<p>Returns all USB hubs found on this bus. The device to test is available to
+the coderef in the <a href="../../../../lib/pods/perlvar.html#__"><code>$_</code></a> variable for simplicity.</p>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="diagnostics">DIAGNOSTICS</a></h1>
+<p>This is an explanation of the diagnostic and error messages this module
+can generate.</p>
+<p>
+</p>
+<hr />
+<h1><a name="dependencies">DEPENDENCIES</a></h1>
+<p>This module depends on the Carp and Device::USB, as well as
+the strict and warnings pragmas. Obviously, libusb must be available since
+that is the entire reason for the module's existence.</p>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>G. Wade Johnson (wade at anomaly dot org)
+Paul Archer (paul at paularcher dot org)</p>
+<p>Houston Perl Mongers Group</p>
+<p>
+</p>
+<hr />
+<h1><a name="bugs">BUGS</a></h1>
+<p>Please report any bugs or feature requests to
+<code>bug-device-usb@rt.cpan.org</code>, or through the web interface at
+<a href="http://rt.cpan.org/NoAuth/ReportBug.html?Device::USB">http://rt.cpan.org/NoAuth/ReportBug.html</a>.
+I will be notified, and then you'll automatically be notified of progress on
+your bug as I make changes.</p>
+<p>
+</p>
+<hr />
+<h1><a name="acknowledgements">ACKNOWLEDGEMENTS</a></h1>
+<p>Thanks go to various members of the Houston Perl Mongers group for input
+on the module. But thanks mostly go to Paul Archer who proposed the project
+and helped with the development.</p>
+<p>Thanks also go to Josep Monés Teixidor, Mike McCauley, and Tony Awtrey for
+spotting, reporting, and (sometimes) fixing bugs.</p>
+<p>
+</p>
+<hr />
+<h1><a name="copyright___license">COPYRIGHT &amp; LICENSE</a></h1>
+<p>Copyright 2006 Houston Perl Mongers</p>
+<p>This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.</p>
+
+</body>
+
+</html>

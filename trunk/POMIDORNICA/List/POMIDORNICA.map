@@ -1,0 +1,27 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+__ds18b20_scratch_pad                                             0x0200       9
+rom_codes                                                         0x0209      27
+rx_buffer0                                                        0x0224      20
+tx_buffer0                                                        0x0238      20
+lcd_buffer                                                        0x024C      30
+_seed                                                             0x026A       4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+devices                                                           R5           1
+rx_buffer_overflow0                                               R2.0      1bit
+i                                                                 R4           1
+j                                                                 R7           1
+rx_wr_index0                                                      R6           1
+rx_rd_index0                                                      R9           1
+rx_counter0                                                       R8           1
+tx_wr_index0                                                      R11          1
+tx_rd_index0                                                      R10          1
+tx_counter0                                                       R13          1

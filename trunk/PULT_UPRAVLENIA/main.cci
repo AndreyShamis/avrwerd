@@ -1,0 +1,8 @@
+VERSION:3 SOURCE_TIMESTAMP:3F440CC5
+NODE:I LEVEL:0 LINE:23 "C:\cvavr2\inc\tiny2313.h"
+NODE:I LEVEL:0 LINE:30 "C:\cvavr2\inc\1wire.h"
+NODE:I LEVEL:0 LINE:33 "C:\cvavr2\inc\ds1820.h"
+NODE:I LEVEL:0 LINE:35 "C:\cvavr2\inc\delay.h"
+NODE:I LEVEL:0 LINE:40 "C:\cvavr2\inc\lcd.h"
+NODE:I LEVEL:0 LINE:43 "C:\cvavr2\inc\stdio.h"
+NODE:F LEVEL:0 LINE:47 "main(void)"
