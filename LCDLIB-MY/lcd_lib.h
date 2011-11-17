@@ -1,17 +1,3 @@
-//*****************************************************************************
-//
-// File Name	: 'lcd_lib.h'
-// Title		: 4 bit LCd interface header file
-// Author		: Scienceprog.com - Copyright (C) 2007
-// Created		: 2007-06-18
-// Revised		: 2007-06-18
-// Version		: 1.0
-// Target MCU	: Atmel AVR series
-//
-// This code is distributed under the GNU Public License
-//		which can be found at http://www.gnu.org/licenses/gpl.txt
-//
-//*****************************************************************************
 #ifndef LCD_LIB
 #define LCD_LIB
 

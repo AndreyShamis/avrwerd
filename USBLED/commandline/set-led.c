@@ -9,6 +9,7 @@
 #include "../usbconfig.h"  /* имена и VID/PID устройства */
 
 #define MSG_OPT 	USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN
+
 static void usage()
 {
     fprintf(stderr, "usage:\n");
@@ -34,14 +35,21 @@ int main(int argc, char **argv)
     /* вычисляем VID/PID из usbconfig.h, так как это центральный источник информации */
     vid = rawVid[1] * 256 + rawVid[0];
     pid = rawPid[1] * 256 + rawPid[0];
-	
+	//usb_set_configuration(handle, 1);
+	//usb_claim_interface(handle, 0);
+	//int result = (int)usb_strerror();
+	//printf("DDDD: %d\n", result);
     /* Следующая функция реализована в opendevice.c: */
     if(usbOpenDevice(&handle, vid, vendor, pid, product, NULL, NULL, NULL) != 0)
 	{
         fprintf(stderr, "Could not find USB device \"%s\" with vid=0x%x pid=0x%x\n", product, vid, pid);
         exit(1);
     }
-
+	int inf_res =0;
+	inf_res = usb_set_configuration(handle, 1	);
+	printf("error on %d : %s\n",inf_res, usb_strerror());
+	inf_res = usb_claim_interface(handle, 0);
+	printf("error on %d: %s\n",inf_res, usb_strerror());
 	scanf("%s",command);
 	while(strcasecmp(command, "q"))
 	{	
@@ -67,8 +75,41 @@ int main(int argc, char **argv)
 		}
 		else if( (isOn = (strcasecmp(command, "on2") == 0)) || strcasecmp(command, "off2") == 0)
 		{
+		
 			cnt = usb_control_msg(handle, MSG_OPT, CUSTOM_RQ_SET_STATUS10, !isOn, 0, buffer, 0, 5000);
 			//if(cnt < 0)fprintf(stderr, "USB error: %s\n", usb_strerror());
+		}
+		else if(strcasecmp(command, "buba") == 0)
+		{	
+			char mess = 'a'; 
+
+			//}usb_interrupt_write
+
+			//{usb_bulk_write
+			//void *cont = NULL;
+			//usb_bulk_setup_async(handle,&cont,0x80);
+			 usb_clear_halt(handle, 0);
+			 printf("error on : %s\n", usb_strerror());
+				cnt = usb_bulk_write(handle, 0x00, mess, sizeof(mess),  2000);
+				printf("error on : %s\n", usb_strerror());
+				printf("usb_bulk_write %d\n", cnt);
+				
+				cnt = usb_interrupt_write(handle, 0x01, mess, sizeof(mess),  2000);
+				printf("error on : %s\n", usb_strerror());
+				printf("usb_bulk_write %d\n", cnt);
+				
+				cnt = usb_interrupt_write(handle, 0x02, mess, sizeof(mess),  2000);
+				printf("error on : %s\n", usb_strerror());
+				printf("usb_bulk_write %d\n", cnt);
+				
+				cnt = usb_bulk_write(handle, 0x03, mess, sizeof(mess),  2000);
+				printf("error on : %s\n", usb_strerror());
+				printf("usb_bulk_write %d\n", cnt);
+				
+				cnt = usb_bulk_write(handle, USB_DT_ENDPOINT, mess, sizeof(mess),  2000);
+				printf("error on : %s\n", usb_strerror());
+				printf("usb_bulk_write %d\n", cnt);
+
 		}
 		else 
 		{

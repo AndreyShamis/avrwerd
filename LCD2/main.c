@@ -7,42 +7,85 @@ External RAM size       : 0
 Data Stack size         : 128
 *****************************************************/
 
-#define DEL_START           45  //  delay leds start
-#define DEL_CYCLE           25  //  delay in each cycle        
-#define MAX_COMMAND_SIZE    5   //  Max command size
+
+#define DEL_START           15*8  //  delay leds start
+#define DEL_CYCLE           15*8  //  delay in each cycle        
+#define MAX_COMMAND_SIZE    6   //  Max command size
 #define BUFF_SIZE           17
 //  Button section
-#define btn1 PINC.1
-#define btn2 PINC.3
-#define btn3 PINC.5
-#define btn4 PINC.4
+#define btn1 PINC1
+#define btn2 PINC3
+#define btn3 PINC5
+#define btn4 PINC4
 
+#define wUSBOUT PORTB.0
+#define wUSBIN PINB.1
 //  Led section
-#define led1 PORTC.0
-#define led2 PORTC.2
-#define led3 PORTC.6
-#define led4 PORTC.7
+#define led1 PORTC0
+#define led2 PORTC2
+#define led3 PORTC6
+#define led4 PORTC7
 //-----------------------------------------------------------------------------
-#include <mega8515.h>
+//#include <avr/mega8515.h>
+#include <avr/io.h>
 #include <stdlib.h>
 #include <string.h>
-#include <delay.h>
+#include <util/delay.h>
 #include <stdio.h>
+//#include "usbdrv/usbdrv.h"
+#include <avr/interrupt.h>
 
+#ifndef F_CPU 
+/* Your CPU clock */
+#define F_CPU 16000000
+#endif
 // Alphanumeric LCD Module functions
-#asm
-   .equ __lcd_port=0x1B ;PORTA
-#endasm
-#include <lcd.h>
+
+//#endasm
+
+//#include <lcd.h>
+
+//#define =x  |=_BV(x)
+#define delay_ms _delay_ms
+//asm(".equ __lcd_port=0x1B PORTA");
+#include "hd44780.h"
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//  Function For disable all leds on PORTC
+void DisableLeds(void){    
+    //led1 &=~_BV(0);//=0;
+    //PORTC0 =0;
+	//sbi(PORTC,0);
+	//led2 |= _BV(1);//=1;
+    //led3 |= _BV(1);//=1;
+    //led4 |= _BV(1);// =1;
+    PORTC=0x1C;
+}
 
 
+ISR (INT0_vect){
+
+    char buff[BUFF_SIZE]; 
+    //#asm("cli");   
+    //lcd_gotoxy(0,0);
+    memset(buff,0,BUFF_SIZE);
+    sprintf(buff,"INT0");
+    //lcd_puts(buff);
+    //lcd_gotoxy(0,1); 
+     memset(buff,0,BUFF_SIZE);
+    memset(buff,0,BUFF_SIZE);
+    //sprintf(buff,"PR%d-%d%d%d%d",PINB,wUSBIN,PINB2,PINB3,PINB4);
+
+    //lcd_puts(buff);
+
+}
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //  Function For 
 void DoCommand(unsigned int comm)
 {    
     char buff[BUFF_SIZE];
-    lcd_gotoxy(0,1);
+//    lcd_gotoxy(0,1);
     memset(buff,0,BUFF_SIZE);
     switch(comm)  
     {
@@ -77,58 +120,27 @@ void DoCommand(unsigned int comm)
         case 31:
                 sprintf(buff,"ACSR%d:OSAL%d",ACSR,OSCCAL);  
                 break;
-    //    case 32:
-     //          sprintf(buff,"SPH-%d:SPL-%d",SPH,SPL);
-    //            break;
-    //    case 33:
-    //            sprintf(buff,"GICR-%d:GIFR-%d",GICR,GIFR); 
-    //            break;  
-    } 
-    /*
-    if(comm == 1){
-            sprintf(buff,"EECR-%d:EEARH-%d",EECR,EEARH);                                 
-    }
-    else if(comm == 2){
-            sprintf(buff,"PINA-%d:PINB-%d",PINA,PINB);                          
-    }
-    else if(comm == 3){
-            sprintf(buff,"PINC-%d:PIND-%d",PINC,PIND);                          
-    }
-    else if(comm == 11){
-            sprintf(buff,"UBRRH-%d:UCSRC-%d",UBRRH,UCSRC);        
-    }                                                         
-    else if(comm == 12){
-            sprintf(buff,"SREG-%d:SPH-%d",SREG,SPH);              
-    }                                                         
-    else if(comm == 13){
-            sprintf(buff,"GICR-%d:GIFR-%d",GICR,GIFR);        
-    }
-    else if(comm == 21){
-            sprintf(buff,"CR-%d:CSR-%d",MCUCR,MCUCSR);                          
-    }
-    else{
-            sprintf(buff,"Comm:%d",comm);  
-    }      */   
-    lcd_puts(buff);
+        case 32:
+                sprintf(buff,"Hello Alexey");
+                break;
+        case 33:
+                sprintf(buff,"GICR-%d:GIFR-%d",GICR,GIFR); 
+                break; 
+        default:
+                sprintf(buff,"Comm %d",comm); 
+    }  
+ //   lcd_puts(buff);
     
-}
-//-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
-//  Function For disable all leds on PORTC
-void DisableLeds()
-{    
-    led1 =0;
-    led2 =1;
-    led3 =1;
-    led4 =1;
-   // PORTC=0x1C;
 }
 
 //-----------------------------------------------------------------------------
 //  Main function
-void main(void)
+int main(void)
 {
-    //char buff[17];
+
+    
+    //char buff[17];    
+
     char command[MAX_COMMAND_SIZE];
     short prev_comm=0;
     int command_pos = 0;
@@ -137,8 +149,8 @@ void main(void)
     unsigned int wh_c=1;
     PORTA=0x00;
     DDRA=0xff;
-    //PORTB=0x00;
-    //DDRB=0x00;
+    PORTB=0x01;
+    DDRB=0x01;
     DDRC=0xC5;
     PORTC=0x01;
     //PORTD=0x00;
@@ -169,10 +181,15 @@ void main(void)
     OCR1BH=0x00;
     OCR1BL=0x00;
 
-    // External Interrupt(s) initialization
-    // INT0: Off// INT1: Off// INT2: Off
-    //MCUCR=0x00;
-    //EMCUCR=0x00;
+// External Interrupt(s) initialization
+// INT0: On
+// INT0 Mode: Low level
+// INT1: Off
+// INT2: Off
+GICR|=0x40;
+MCUCR=0x00;
+EMCUCR=0x00;
+GIFR=0x40;
 
     // Timer(s)/Counter(s) Interrupt(s) initialization
     TIMSK=0x00;
@@ -184,10 +201,10 @@ void main(void)
     SFIOR=0x00;
 
     // LCD module initialization
-    lcd_init(16);
-    lcd_clear();        /* очистка дисплея */
-    lcd_gotoxy(7,0);        /* верхняя строка, 4 позиция */
-    lcd_putsf("LCD");/* выводим надпись в указанных координатах */
+//    lcd_init(16);
+//    lcd_clear();        /* очистка дисплея */
+//    lcd_gotoxy(7,0);        /* верхняя строка, 4 позиция */
+//    lcd_putsf("LCD");/* выводим надпись в указанных координатах */
     DisableLeds();
     delay_ms(DEL_START);
 /*        
@@ -207,20 +224,22 @@ void main(void)
     delay_ms(DEL_START);
     DisableLeds();      
 */
+
     while (wh_c < 1000){   
         wh_c++;
-        if(wh_c%20==0)  led1    = 1;
-        else            led1    = 0;
+        //if(wh_c%20==0)  led1    = 1;
+        //else            led1    = 0;
     
         if(wh_c > 500){
-            lcd_clear();
-            lcd_gotoxy(0,0); 
+//            lcd_clear();
+//            lcd_gotoxy(0,0); 
             delay_ms(10);        
             wh_c = 1;
         }
           
         delay_ms(del_size);
-
+           
+ 
         if(command_pos < MAX_COMMAND_SIZE-1 && ( btn1 == 0 || btn2 == 0 || btn3 == 0)){
             if(btn1 == 0)
                 command[command_pos] = '1';
@@ -228,101 +247,26 @@ void main(void)
                 command[command_pos] = '2';
             else
                 command[command_pos] = '3';
-            command_pos++;
+            command_pos++;  
+            delay_ms(del_size*2);
         }                 
                 
         if(prev_comm)
         {
                 DoCommand(prev_comm);
         }
-        if(btn4 == 0){        
-            //short int ind;       
-            lcd_clear(); 
+        if(btn4 == 0){               
+ //           lcd_clear(); 
             prev_comm=  atoi(command);
-            DoCommand(prev_comm);
- //           lcd_gotoxy(0,1);
-            //sprintf(buff,"EECR-%d:EEARH-%d",EECR,EEARH);                          
-//            lcd_puts(buff);
-    
+            DoCommand(prev_comm);    
             memset(command,0,MAX_COMMAND_SIZE);
-            //for(ind=0;ind<MAX_COMMAND_SIZE;ind++){
-            //    command[ind] = 0;
-            //}
-            command_pos = 0;
+            command_pos = 0;  
+            delay_ms(del_size*2);
         }
 
         //lcd_clear();
-        lcd_gotoxy(0,0);                         
-        lcd_puts(command);
-        /*
-        if(btn1 == 0 && btn3 == 0){
-            lcd_clear();
-            lcd_gotoxy(0,0); 
-            sprintf(buff,"wh_c:%d",wh_c);                          
-            lcd_puts(buff);
-            lcd_gotoxy(0,1);
-            sprintf(buff,"EECR-%d:EEARH-%d",EECR,EEARH);                          
-            lcd_puts(buff);
-        
-        }
-        else if(btn1 == 0 && btn2 == 0){
-            lcd_clear();
-            lcd_gotoxy(0,0); 
-            sprintf(buff,"PINA-%d:PINB-%d",PINA,PINB);                          
-            lcd_puts(buff);
-            lcd_gotoxy(0,1);
-            sprintf(buff,"PINC-%d:PIND-%d",PINC,PIND);                          
-            lcd_puts(buff);
-        
-        }
-        else if(btn1 == 0){     
-            lcd_clear();
-            DisableLeds();
-			led1 =1;
-            lcd_gotoxy(0,0); 
-            sprintf(buff,"UBRRH-%d:UCSRC-%d",UBRRH,UCSRC);                          
-            lcd_puts(buff);
-              
-            lcd_gotoxy(0,1);   
-            lcd_putsf("Andrey Shamis");
-
-		}
-		else if(btn2 == 0){
-            DisableLeds();
-    		led2 = 0; //0-On ; 1 - off
-            lcd_clear();	
-            lcd_gotoxy(0,0);     
-            sprintf(buff,"SREG-%d:SPH-%d",SREG,SPH);                          
-            lcd_puts(buff);
-            lcd_gotoxy(0,1);
-            sprintf(buff,"GICR-%d:GIFR-%d",GICR,GIFR);                          
-            lcd_puts(buff) ;
-		}    
-		else if(btn4==0){                 
-            DisableLeds();
-			led4 = 0;
-		}
-        else if(btn3==0){     
-            DisableLeds();
-            led3 = 0; 
-            lcd_clear();	
-            lcd_gotoxy(0,0);   
-            sprintf(buff,"%x:SPL-%d",counter,SPL);                          
-            lcd_puts(buff);     
-            lcd_gotoxy(0,1);   
-            sprintf(buff,"CR-%d:CSR-%d",MCUCR,MCUCSR);                          
-            lcd_puts(buff);     
-            counter++;
-                         
-            if(del_size > 5){
-                del_size--;
-            }
-        }   
-        else{
-            DisableLeds(); 
-            del_size = DEL_CYCLE;
-        } 
-        
-        */
+//        lcd_gotoxy(0,0);                         
+//        lcd_puts(command); 
+//        #asm("sei"); 
     }
 }

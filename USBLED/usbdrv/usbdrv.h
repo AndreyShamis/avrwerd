@@ -1,14 +1,3 @@
-/* Имя: usbdrv.h
- * Проект: драйвер AVR USB
- * Автор: Christian Starkjohann
- * Перевод: microsin.ru  
- * Дата создания: 2004-12-29
- * Табуляция: 4
- * Copyright: (c) 2005 by OBJECTIVE DEVELOPMENT Software GmbH
- * Лицензия: GNU GPL v2 (see License.txt) or proprietary (CommercialLicense.txt)
- * Ревизия: $Id: usbdrv.h 607 2008-05-13 15:57:28Z cs $
- */
-
 #ifndef __usbdrv_h_included__
 #define __usbdrv_h_included__
 #include "usbconfig.h"

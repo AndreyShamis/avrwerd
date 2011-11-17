@@ -1,14 +1,3 @@
-/* Имя: opendevice.h
- * Проект: библиотека хоста AVR-USB
- * Автор: Christian Starkjohann
- * Перевод: microsin.ru
- * Дата создания: 2008-04-10
- * Табуляция: 4
- * Copyright: (c) 2008 by OBJECTIVE DEVELOPMENT Software GmbH
- * Лицензия: GNU GPL v2 (см. License.txt) или проприетарная (CommercialLicense.txt) 
- * Ревизия: $Id: opendevice.h 553 2008-04-17 19:00:20Z cs $
- */
-
 /*
 Основное описание:
 Этот модуль предлагает дополнительный функционал для драйверов хоста на основе
