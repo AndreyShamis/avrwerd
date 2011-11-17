@@ -1,0 +1,574 @@
+;//*****************************************************************************
+;//
+;//  Author(s)...: Pashgan    http://ChipEnable.Ru
+;//
+;//  Target(s)...: любой
+;//
+;//  Compiler....: любой
+;//
+;//  Description.: Универсальный драйвер матричной клавиатуры
+;//
+;//  Data........: 12.10.2011
+;//
+;//******************************************************************************
+;#include "keyboard.h"
+;
+;
+;//раздел для совместимости с компиляторами**************************************
+;//менять здесь ничего не надо
+;
+;#ifdef  __ICCAVR__
+;  #include <ioavr.h>
+;  #include <intrinsics.h>
+;
+;  #define _delay_us(value)  __delay_cycles((F_CPU / 1000000) * (value));
+;  #define FLASH_ATR         __flash
+;  #define read_flash(adr)   adr
+;#endif
+;
+;#ifdef  __GNUC__
+;  #include <avr/io.h>
+;  #include <util/delay.h>
+;  #include <avr/interrupt.h>
+;  #include <avr/pgmspace.h>
+;
+;  #define FLASH_ATR         PROGMEM
+;  #define read_flash(adr)   pgm_read_byte(&(adr))
+;#endif
+;
+;#ifdef __CODEVISIONAVR__
+;  #include <io.h>
+;PCODE: $00000000 VOL: 0
+	#ifndef __SLEEP_DEFINED__
+;PCODE: $00000001 VOL: 0
+	#define __SLEEP_DEFINED__
+;PCODE: $00000002 VOL: 0
+	.EQU __se_bit=0x40
+;PCODE: $00000003 VOL: 0
+	.EQU __sm_mask=0xB0
+;PCODE: $00000004 VOL: 0
+	.EQU __sm_powerdown=0x20
+;PCODE: $00000005 VOL: 0
+	.EQU __sm_powersave=0x30
+;PCODE: $00000006 VOL: 0
+	.EQU __sm_standby=0xA0
+;PCODE: $00000007 VOL: 0
+	.EQU __sm_ext_standby=0xB0
+;PCODE: $00000008 VOL: 0
+	.EQU __sm_adc_noise_red=0x10
+;PCODE: $00000009 VOL: 0
+	.SET power_ctrl_reg=mcucr
+;PCODE: $0000000A VOL: 0
+	#endif
+;PCODE: $0000000B VOL: 0
+;PCODE: $0000000C VOL: 0
+;  #include <delay.h>
+;
+;  #define _delay_us(value) delay_us(value)
+;  #define FLASH_ATR         __flash
+;  #define read_flash(adr)   adr
+;#endif
+;//******************************************************************************
+;
+;
+;
+;
+;#ifdef KEYBOARD_4X4
+;   #warning "Keyboard 4x4"
+;
+;   #define KEYS 16
+;   #define SCAN_CYCLES 4
+;   #define ROW_MASK ((1<<PIN_ROW1)|(1<<PIN_ROW2)|(1<<PIN_ROW3)|(1<<PIN_ROW4))
+;   #define COL_MASK ((1<<PIN_COL1)|(1<<PIN_COL2)|(1<<PIN_COL3)|(1<<PIN_COL4))
+;
+;  //таблица перекодировки
+;  FLASH_ATR unsigned char keyTable[][2] = {
+;  {((~(1<<PIN_ROW1)&(ROW_MASK))|(~(1<<PIN_COL1)&(COL_MASK))), EVENT_KEY1},
+;  {((~(1<<PIN_ROW1)&(ROW_MASK))|(~(1<<PIN_COL2)&(COL_MASK))), EVENT_KEY2},
+;  {((~(1<<PIN_ROW1)&(ROW_MASK))|(~(1<<PIN_COL3)&(COL_MASK))), EVENT_KEY3},
+;  {((~(1<<PIN_ROW1)&(ROW_MASK))|(~(1<<PIN_COL4)&(COL_MASK))), EVENT_KEYA},
+;
+;  {((~(1<<PIN_ROW2)&(ROW_MASK))|(~(1<<PIN_COL1)&(COL_MASK))), EVENT_KEY4},
+;  {((~(1<<PIN_ROW2)&(ROW_MASK))|(~(1<<PIN_COL2)&(COL_MASK))), EVENT_KEY5},
+;  {((~(1<<PIN_ROW2)&(ROW_MASK))|(~(1<<PIN_COL3)&(COL_MASK))), EVENT_KEY6},
+;  {((~(1<<PIN_ROW2)&(ROW_MASK))|(~(1<<PIN_COL4)&(COL_MASK))), EVENT_KEYB},
+;
+;  {((~(1<<PIN_ROW3)&(ROW_MASK))|(~(1<<PIN_COL1)&(COL_MASK))), EVENT_KEY7},
+;  {((~(1<<PIN_ROW3)&(ROW_MASK))|(~(1<<PIN_COL2)&(COL_MASK))), EVENT_KEY8},
+;  {((~(1<<PIN_ROW3)&(ROW_MASK))|(~(1<<PIN_COL3)&(COL_MASK))), EVENT_KEY9},
+;  {((~(1<<PIN_ROW3)&(ROW_MASK))|(~(1<<PIN_COL4)&(COL_MASK))), EVENT_KEYC},
+;
+;  {((~(1<<PIN_ROW4)&(ROW_MASK))|(~(1<<PIN_COL1)&(COL_MASK))), EVENT_KEYZ},
+;  {((~(1<<PIN_ROW4)&(ROW_MASK))|(~(1<<PIN_COL2)&(COL_MASK))), EVENT_KEY0},
+;  {((~(1<<PIN_ROW4)&(ROW_MASK))|(~(1<<PIN_COL3)&(COL_MASK))), EVENT_KEYR},
+;  {((~(1<<PIN_ROW4)&(ROW_MASK))|(~(1<<PIN_COL4)&(COL_MASK))), EVENT_KEYD}
+;  };
+;
+;#else
+;  #warning "Keyboard3x4"
+;
+;  #define KEYS 12
+;  #define SCAN_CYCLES 3
+;  #define ROW_MASK ((1<<PIN_ROW1)|(1<<PIN_ROW2)|(1<<PIN_ROW3)|(1<<PIN_ROW4))
+;  #define COL_MASK ((1<<PIN_COL1)|(1<<PIN_COL2)|(1<<PIN_COL3))
+;
+;  //таблица перекодировки
+;  FLASH_ATR unsigned char keyTable[][2] = {
+;  {((~(1<<PIN_ROW1)&(ROW_MASK))|(~(1<<PIN_COL1)&(COL_MASK))), EVENT_KEY1},
+;  {((~(1<<PIN_ROW1)&(ROW_MASK))|(~(1<<PIN_COL2)&(COL_MASK))), EVENT_KEY2},
+;  {((~(1<<PIN_ROW1)&(ROW_MASK))|(~(1<<PIN_COL3)&(COL_MASK))), EVENT_KEY3},
+;
+;  {((~(1<<PIN_ROW2)&(ROW_MASK))|(~(1<<PIN_COL1)&(COL_MASK))), EVENT_KEY4},
+;  {((~(1<<PIN_ROW2)&(ROW_MASK))|(~(1<<PIN_COL2)&(COL_MASK))), EVENT_KEY5},
+;  {((~(1<<PIN_ROW2)&(ROW_MASK))|(~(1<<PIN_COL3)&(COL_MASK))), EVENT_KEY6},
+;
+;  {((~(1<<PIN_ROW3)&(ROW_MASK))|(~(1<<PIN_COL1)&(COL_MASK))), EVENT_KEY7},
+;  {((~(1<<PIN_ROW3)&(ROW_MASK))|(~(1<<PIN_COL2)&(COL_MASK))), EVENT_KEY8},
+;  {((~(1<<PIN_ROW3)&(ROW_MASK))|(~(1<<PIN_COL3)&(COL_MASK))), EVENT_KEY9},
+;
+;  {((~(1<<PIN_ROW4)&(ROW_MASK))|(~(1<<PIN_COL1)&(COL_MASK))), EVENT_KEYZ},
+;  {((~(1<<PIN_ROW4)&(ROW_MASK))|(~(1<<PIN_COL2)&(COL_MASK))), EVENT_KEY0},
+;  {((~(1<<PIN_ROW4)&(ROW_MASK))|(~(1<<PIN_COL3)&(COL_MASK))), EVENT_KEYR}
+;  };
+;
+;#endif
+;
+;
+;#define DELAY 5
+;
+;//состояние автомата
+;unsigned char keyState = 0;
+;//код кнопки
+;unsigned char keyCode;
+;//символьный код кнопки
+;volatile unsigned char keyValue;
+;//флаг - кнопка нажата и удерживается
+;unsigned char keyDown;
+;//флаг - нажата новая кнопка
+;volatile unsigned char keyNew;
+;
+;unsigned char KEYB_AnyKey(void);
+;unsigned char KEYB_SameKey(void);
+;void KEYB_ScanKey(void);
+;void KEYB_FindKey(void);
+;void KEYB_ClearKey(void);
+;
+;//инициализация портов,
+;//обнуление переменных
+;void KEYB_Init(void)
+; 0000 0087 {
+
+	.CSEG
+;PCODE: $0000000D VOL: 0
+;PCODE: $0000000E VOL: 0
+; 0000 0088 #ifndef COMMON_BUS
+; 0000 0089   //вход, подтяжка
+; 0000 008A   DDRX_ROW &= ~ROW_MASK;
+; 0000 008B   PORTX_ROW |= ROW_MASK;
+; 0000 008C   //выход, ноль
+; 0000 008D   DDRX_COL |= COL_MASK;
+; 0000 008E   PORTX_COL &= ~COL_MASK;
+; 0000 008F #endif //COMMON_BUS
+; 0000 0090 
+; 0000 0091   keyState = 0;
+;PCODE: $0000000F VOL: 0
+; 0000 0092   keyCode = 0;
+;PCODE: $00000010 VOL: 0
+; 0000 0093   keyValue = 0;
+;PCODE: $00000011 VOL: 0
+;PCODE: $00000012 VOL: 1
+; 0000 0094   keyDown = 0;
+;PCODE: $00000013 VOL: 0
+; 0000 0095   keyNew = 0;
+;PCODE: $00000014 VOL: 0
+;PCODE: $00000015 VOL: 1
+; 0000 0096 }
+;PCODE: $00000016 VOL: 0
+;PCODE: $00000017 VOL: 0
+;
+;
+;void KEYB_ScanKeyboard(void)
+; 0000 009A {
+;PCODE: $00000018 VOL: 0
+;PCODE: $00000019 VOL: 0
+; 0000 009B #ifdef COMMON_BUS
+; 0000 009C   unsigned char buf[4];
+; 0000 009D   buf[0] = DDRX_COL;
+;PCODE: $0000001A VOL: 0
+;	buf -> Y+0
+;PCODE: $0000001B VOL: 0
+;PCODE: $0000001C VOL: 0
+; 0000 009E   buf[1] = PORTX_COL;
+;PCODE: $0000001D VOL: 0
+;PCODE: $0000001E VOL: 0
+; 0000 009F   buf[2] = DDRX_ROW;
+;PCODE: $0000001F VOL: 0
+;PCODE: $00000020 VOL: 0
+; 0000 00A0   buf[3] = PORTX_ROW;
+;PCODE: $00000021 VOL: 0
+;PCODE: $00000022 VOL: 0
+; 0000 00A1 
+; 0000 00A2   //вход, подтяжка
+; 0000 00A3   DDRX_ROW &= ~ROW_MASK;
+;PCODE: $00000023 VOL: 0
+;PCODE: $00000024 VOL: 0
+;PCODE: $00000025 VOL: 0
+; 0000 00A4   PORTX_ROW |= ROW_MASK;
+;PCODE: $00000026 VOL: 0
+;PCODE: $00000027 VOL: 0
+;PCODE: $00000028 VOL: 0
+; 0000 00A5 
+; 0000 00A6   //выход, ноль
+; 0000 00A7   DDRX_COL |= COL_MASK;
+;PCODE: $00000029 VOL: 0
+;PCODE: $0000002A VOL: 0
+;PCODE: $0000002B VOL: 0
+; 0000 00A8   PORTX_COL &= ~COL_MASK;
+;PCODE: $0000002C VOL: 0
+;PCODE: $0000002D VOL: 0
+;PCODE: $0000002E VOL: 0
+; 0000 00A9 #endif //COMMON_BUS
+; 0000 00AA 
+; 0000 00AB   switch (keyState){
+;PCODE: $0000002F VOL: 0
+; 0000 00AC      case 0: {
+;PCODE: $00000030 VOL: 0
+;PCODE: $00000031 VOL: 0
+; 0000 00AD        if (KEYB_AnyKey()) {
+;PCODE: $00000032 VOL: 0
+;PCODE: $00000033 VOL: 0
+;PCODE: $00000034 VOL: 0
+; 0000 00AE          KEYB_ScanKey();
+;PCODE: $00000035 VOL: 0
+; 0000 00AF          keyState = 1;
+;PCODE: $00000036 VOL: 0
+;PCODE: $00000037 VOL: 0
+; 0000 00B0        }
+; 0000 00B1      }
+;PCODE: $00000038 VOL: 0
+; 0000 00B2      break;
+;PCODE: $00000039 VOL: 0
+; 0000 00B3 
+; 0000 00B4      case 1: {
+;PCODE: $0000003A VOL: 0
+;PCODE: $0000003B VOL: 0
+;PCODE: $0000003C VOL: 0
+; 0000 00B5        if (KEYB_SameKey()) {
+;PCODE: $0000003D VOL: 0
+;PCODE: $0000003E VOL: 0
+;PCODE: $0000003F VOL: 0
+; 0000 00B6          KEYB_FindKey();
+;PCODE: $00000040 VOL: 0
+; 0000 00B7          keyState = 2;
+;PCODE: $00000041 VOL: 0
+;PCODE: $00000042 VOL: 0
+; 0000 00B8        }
+; 0000 00B9        else keyState = 0;
+;PCODE: $00000043 VOL: 0
+;PCODE: $00000044 VOL: 0
+;PCODE: $00000045 VOL: 0
+; 0000 00BA      }
+;PCODE: $00000046 VOL: 0
+; 0000 00BB      break;
+;PCODE: $00000047 VOL: 0
+; 0000 00BC 
+; 0000 00BD      case 2: {
+;PCODE: $00000048 VOL: 0
+;PCODE: $00000049 VOL: 0
+;PCODE: $0000004A VOL: 0
+; 0000 00BE        if (KEYB_SameKey()) {}
+;PCODE: $0000004B VOL: 0
+;PCODE: $0000004C VOL: 0
+;PCODE: $0000004D VOL: 0
+; 0000 00BF        else keyState = 3;
+;PCODE: $0000004E VOL: 0
+;PCODE: $0000004F VOL: 0
+;PCODE: $00000050 VOL: 0
+;PCODE: $00000051 VOL: 0
+; 0000 00C0      }
+;PCODE: $00000052 VOL: 0
+; 0000 00C1      break;
+;PCODE: $00000053 VOL: 0
+; 0000 00C2 
+; 0000 00C3      case 3: {
+;PCODE: $00000054 VOL: 0
+;PCODE: $00000055 VOL: 0
+;PCODE: $00000056 VOL: 0
+; 0000 00C4        if (KEYB_SameKey()) {
+;PCODE: $00000057 VOL: 0
+;PCODE: $00000058 VOL: 0
+;PCODE: $00000059 VOL: 0
+; 0000 00C5          keyState = 2;
+;PCODE: $0000005A VOL: 0
+;PCODE: $0000005B VOL: 0
+; 0000 00C6        }
+; 0000 00C7        else {
+;PCODE: $0000005C VOL: 0
+;PCODE: $0000005D VOL: 0
+; 0000 00C8          KEYB_ClearKey();
+;PCODE: $0000005E VOL: 0
+; 0000 00C9          keyState = 0;
+;PCODE: $0000005F VOL: 0
+; 0000 00CA        }
+;PCODE: $00000060 VOL: 0
+; 0000 00CB      }
+; 0000 00CC      break;
+;PCODE: $00000061 VOL: 0
+; 0000 00CD 
+; 0000 00CE      default:
+;PCODE: $00000062 VOL: 0
+; 0000 00CF        break;
+;PCODE: $00000063 VOL: 0
+; 0000 00D0    }
+;PCODE: $00000064 VOL: 0
+; 0000 00D1 
+; 0000 00D2 #ifdef COMMON_BUS
+; 0000 00D3   DDRX_COL = buf[0];
+;PCODE: $00000065 VOL: 0
+;PCODE: $00000066 VOL: 0
+; 0000 00D4   PORTX_COL = buf[1];
+;PCODE: $00000067 VOL: 0
+;PCODE: $00000068 VOL: 0
+; 0000 00D5   DDRX_ROW = buf[2];
+;PCODE: $00000069 VOL: 0
+;PCODE: $0000006A VOL: 0
+; 0000 00D6   PORTX_ROW = buf[3];
+;PCODE: $0000006B VOL: 0
+;PCODE: $0000006C VOL: 0
+; 0000 00D7 #endif //COMMON_BUS
+; 0000 00D8 }
+;PCODE: $0000006D VOL: 0
+;PCODE: $0000006E VOL: 0
+;PCODE: $0000006F VOL: 0
+;
+;
+;//возвращает true если какая нибудь кнопка нажата
+;unsigned char KEYB_AnyKey(void)
+; 0000 00DD {
+;PCODE: $00000070 VOL: 0
+;PCODE: $00000071 VOL: 0
+; 0000 00DE   PORTX_COL &= ~COL_MASK;
+;PCODE: $00000072 VOL: 0
+;PCODE: $00000073 VOL: 0
+;PCODE: $00000074 VOL: 0
+; 0000 00DF   _delay_us(DELAY);
+;PCODE: $00000075 VOL: 0
+; 0000 00E0   return (~PINX_ROW & ROW_MASK);
+;PCODE: $00000076 VOL: 0
+;PCODE: $00000077 VOL: 0
+;PCODE: $00000078 VOL: 0
+;PCODE: $00000079 VOL: 0
+; 0000 00E1 }
+;PCODE: $0000007A VOL: 0
+;
+;//возвращает true, если удерживается та же кнопка,
+;//что и в предыдущем цикле опроса
+;unsigned char KEYB_SameKey(void)
+; 0000 00E6 {
+;PCODE: $0000007B VOL: 0
+;PCODE: $0000007C VOL: 0
+; 0000 00E7   PORTX_COL &= ~COL_MASK;
+;PCODE: $0000007D VOL: 0
+;PCODE: $0000007E VOL: 0
+;PCODE: $0000007F VOL: 0
+; 0000 00E8   PORTX_COL |= (keyCode & COL_MASK);
+;PCODE: $00000080 VOL: 0
+;PCODE: $00000081 VOL: 0
+;PCODE: $00000082 VOL: 0
+;PCODE: $00000083 VOL: 0
+;PCODE: $00000084 VOL: 0
+;PCODE: $00000085 VOL: 0
+; 0000 00E9   return ((~keyCode & ROW_MASK)&(~PINX_ROW));
+;PCODE: $00000086 VOL: 0
+;PCODE: $00000087 VOL: 0
+;PCODE: $00000088 VOL: 0
+;PCODE: $00000089 VOL: 0
+;PCODE: $0000008A VOL: 0
+;PCODE: $0000008B VOL: 0
+;PCODE: $0000008C VOL: 0
+;PCODE: $0000008D VOL: 0
+; 0000 00EA }
+;PCODE: $0000008E VOL: 0
+;
+;
+;//сканирует клавиатуру
+;void KEYB_ScanKey(void)
+; 0000 00EF {
+;PCODE: $0000008F VOL: 0
+;PCODE: $00000090 VOL: 0
+; 0000 00F0     unsigned char i;
+; 0000 00F1     for(i = 0; i<SCAN_CYCLES; i++){
+;PCODE: $00000091 VOL: 0
+;	i -> R17
+;PCODE: $00000092 VOL: 0
+;PCODE: $00000093 VOL: 0
+;PCODE: $00000094 VOL: 0
+;PCODE: $00000095 VOL: 0
+;PCODE: $00000096 VOL: 0
+;PCODE: $00000097 VOL: 0
+;PCODE: $00000098 VOL: 0
+;PCODE: $00000099 VOL: 0
+;PCODE: $0000009A VOL: 0
+; 0000 00F2        PORTX_COL |= COL_MASK;
+;PCODE: $0000009B VOL: 0
+;PCODE: $0000009C VOL: 0
+;PCODE: $0000009D VOL: 0
+; 0000 00F3        if (i == 0) PORTX_COL &= ~(1<<PIN_COL1);
+;PCODE: $0000009E VOL: 0
+;PCODE: $0000009F VOL: 0
+;PCODE: $000000A0 VOL: 0
+;PCODE: $000000A1 VOL: 0
+; 0000 00F4        if (i == 1) PORTX_COL &= ~(1<<PIN_COL2);
+;PCODE: $000000A2 VOL: 0
+;PCODE: $000000A3 VOL: 0
+;PCODE: $000000A4 VOL: 0
+;PCODE: $000000A5 VOL: 0
+;PCODE: $000000A6 VOL: 0
+;PCODE: $000000A7 VOL: 0
+; 0000 00F5        if (i == 2) PORTX_COL &= ~(1<<PIN_COL3);
+;PCODE: $000000A8 VOL: 0
+;PCODE: $000000A9 VOL: 0
+;PCODE: $000000AA VOL: 0
+;PCODE: $000000AB VOL: 0
+;PCODE: $000000AC VOL: 0
+;PCODE: $000000AD VOL: 0
+; 0000 00F6        #ifdef KEYBOARD_4X4
+; 0000 00F7        if (i == 3) PORTX_COL &= ~(1<<PIN_COL4);
+;PCODE: $000000AE VOL: 0
+;PCODE: $000000AF VOL: 0
+;PCODE: $000000B0 VOL: 0
+;PCODE: $000000B1 VOL: 0
+;PCODE: $000000B2 VOL: 0
+;PCODE: $000000B3 VOL: 0
+; 0000 00F8        #endif
+; 0000 00F9        _delay_us(DELAY);
+;PCODE: $000000B4 VOL: 0
+;PCODE: $000000B5 VOL: 0
+; 0000 00FA        if (~PINX_ROW & ROW_MASK) {
+;PCODE: $000000B6 VOL: 0
+;PCODE: $000000B7 VOL: 0
+;PCODE: $000000B8 VOL: 0
+;PCODE: $000000B9 VOL: 0
+; 0000 00FB          keyCode = PINX_ROW & ROW_MASK;
+;PCODE: $000000BA VOL: 0
+;PCODE: $000000BB VOL: 0
+;PCODE: $000000BC VOL: 0
+; 0000 00FC          keyCode |= PORTX_COL & COL_MASK;
+;PCODE: $000000BD VOL: 0
+;PCODE: $000000BE VOL: 0
+;PCODE: $000000BF VOL: 0
+;PCODE: $000000C0 VOL: 0
+; 0000 00FD          return;
+;PCODE: $000000C1 VOL: 0
+;PCODE: $000000C2 VOL: 0
+; 0000 00FE        }
+; 0000 00FF     }
+;PCODE: $000000C3 VOL: 0
+;PCODE: $000000C4 VOL: 0
+;PCODE: $000000C5 VOL: 0
+;PCODE: $000000C6 VOL: 0
+;PCODE: $000000C7 VOL: 0
+;PCODE: $000000C8 VOL: 0
+; 0000 0100 }
+;PCODE: $000000C9 VOL: 0
+;PCODE: $000000CA VOL: 0
+;PCODE: $000000CB VOL: 0
+;
+;
+;
+;//ищет символьный код кнопки по таблице
+;//обновляет значения флагов
+;void KEYB_FindKey(void)
+; 0000 0107 {
+;PCODE: $000000CC VOL: 0
+;PCODE: $000000CD VOL: 0
+; 0000 0108   unsigned char index;
+; 0000 0109   for (index = 0; index < KEYS; index++) {
+;PCODE: $000000CE VOL: 0
+;	index -> R17
+;PCODE: $000000CF VOL: 0
+;PCODE: $000000D0 VOL: 0
+;PCODE: $000000D1 VOL: 0
+;PCODE: $000000D2 VOL: 0
+;PCODE: $000000D3 VOL: 0
+;PCODE: $000000D4 VOL: 0
+;PCODE: $000000D5 VOL: 0
+;PCODE: $000000D6 VOL: 0
+;PCODE: $000000D7 VOL: 0
+; 0000 010A     if (read_flash(keyTable [index][0]) == keyCode) {
+;PCODE: $000000D8 VOL: 0
+;PCODE: $000000D9 VOL: 0
+;PCODE: $000000DA VOL: 0
+;PCODE: $000000DB VOL: 0
+;PCODE: $000000DC VOL: 0
+;PCODE: $000000DD VOL: 0
+;PCODE: $000000DE VOL: 0
+;PCODE: $000000DF VOL: 0
+; 0000 010B       keyValue = read_flash(keyTable [index][1]);
+;PCODE: $000000E0 VOL: 0
+;PCODE: $000000E1 VOL: 0
+;PCODE: $000000E2 VOL: 0
+;PCODE: $000000E3 VOL: 0
+;PCODE: $000000E4 VOL: 0
+;PCODE: $000000E5 VOL: 0
+;PCODE: $000000E6 VOL: 0
+;PCODE: $000000E7 VOL: 1
+; 0000 010C       keyDown = 1;
+;PCODE: $000000E8 VOL: 0
+;PCODE: $000000E9 VOL: 0
+; 0000 010D       keyNew = 1;
+;PCODE: $000000EA VOL: 0
+;PCODE: $000000EB VOL: 1
+; 0000 010E       return;
+;PCODE: $000000EC VOL: 0
+;PCODE: $000000ED VOL: 0
+; 0000 010F     }
+; 0000 0110   }
+;PCODE: $000000EE VOL: 0
+;PCODE: $000000EF VOL: 0
+;PCODE: $000000F0 VOL: 0
+;PCODE: $000000F1 VOL: 0
+;PCODE: $000000F2 VOL: 0
+;PCODE: $000000F3 VOL: 0
+; 0000 0111 }
+;PCODE: $000000F4 VOL: 0
+;PCODE: $000000F5 VOL: 0
+;PCODE: $000000F6 VOL: 0
+;
+;//сбрасывает флаг
+;void KEYB_ClearKey(void)
+; 0000 0115 {
+;PCODE: $000000F7 VOL: 0
+;PCODE: $000000F8 VOL: 0
+; 0000 0116   keyDown = 0;
+;PCODE: $000000F9 VOL: 0
+; 0000 0117 }
+;PCODE: $000000FA VOL: 0
+;PCODE: $000000FB VOL: 0
+;
+;//возвращает код нажатой кнопки
+;unsigned char KEYB_GetKey(void)
+; 0000 011B {
+;PCODE: $000000FC VOL: 0
+;PCODE: $000000FD VOL: 0
+; 0000 011C   if (keyNew){
+;PCODE: $000000FE VOL: 1
+;PCODE: $000000FF VOL: 0
+;PCODE: $00000100 VOL: 0
+; 0000 011D     keyNew = 0;
+;PCODE: $00000101 VOL: 0
+;PCODE: $00000102 VOL: 1
+; 0000 011E     return keyValue;
+;PCODE: $00000103 VOL: 1
+;PCODE: $00000104 VOL: 0
+; 0000 011F   }
+; 0000 0120   else
+;PCODE: $00000105 VOL: 0
+; 0000 0121     return EVENT_NULL;
+;PCODE: $00000106 VOL: 0
+;PCODE: $00000107 VOL: 0
+; 0000 0122 }
+;PCODE: $00000108 VOL: 0
+;PCODE: $00000109 VOL: 0
+;PCODE: $0000010A VOL: 0
+;

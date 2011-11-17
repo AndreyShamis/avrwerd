@@ -1,0 +1,17 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+keyValue                                                          0169h        1
+keyNew                                                            016Ah        1
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+keyState                                                          R5           1
+keyCode                                                           R4           1
+keyDown                                                           R7           1
+buf                                                               R6           1

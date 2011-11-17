@@ -1,0 +1,626 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<script language="JavaScript" src="../../../../displayToc.js"></script>
+<script language="JavaScript" src="../../../../tocParas.js"></script>
+<script language="JavaScript" src="../../../../tocTab.js"></script>
+<link rel="stylesheet" type="text/css" href="../../../../scineplex.css">
+<title>Device::USB::Device - Use libusb to access USB devices.</title>
+<link rel="stylesheet" href="../../../../Active.css" type="text/css" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+<!-- INDEX BEGIN -->
+<div name="index">
+<script>writelinks('__top__',4);</script>
+<h1><a>Device::USB::Device - Use libusb to access USB devices.</a></h1>
+<p><a name="__index__"></a></p>
+
+
+<ul>
+
+	<li><a href="#device__usb__device">Device::USB::Device</a></li>
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#version">VERSION</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#methods">METHODS</a></li>
+	</ul>
+
+	<li><a href="#diagnostics">DIAGNOSTICS</a></li>
+	<li><a href="#dependencies">DEPENDENCIES</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#bugs">BUGS</a></li>
+	<li><a href="#acknowledgements">ACKNOWLEDGEMENTS</a></li>
+	<li><a href="#copyright___license">COPYRIGHT &amp; LICENSE</a></li>
+</ul>
+
+<hr name="index" />
+</div>
+<!-- INDEX END -->
+
+<p>
+</p>
+<h1><a name="device__usb__device">Device::USB::Device</a></h1>
+<p>This class encapsulates the USB device structure and the methods that may be
+applied to it.</p>
+<p>
+</p>
+<hr />
+<h1><a name="name">NAME</a></h1>
+<p>Device::USB::Device - Use libusb to access USB devices.</p>
+<p>
+</p>
+<hr />
+<h1><a name="version">VERSION</a></h1>
+<p>Version 0.20</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p>Device:USB::Device provides a Perl object for accessing a USB device
+using the libusb library.</p>
+<pre>
+    <span class="keyword">use</span> <span class="variable">Device::USB</span><span class="operator">;</span>
+</pre>
+<pre>
+    <span class="keyword">my</span> <span class="variable">$usb</span> <span class="operator">=</span> <span class="variable">Device::USB</span><span class="operator">-&gt;</span><span class="variable">new</span><span class="operator">();</span>
+    <span class="keyword">my</span> <span class="variable">$dev</span> <span class="operator">=</span> <span class="variable">$usb</span><span class="operator">-&gt;</span><span class="variable">find_device</span><span class="operator">(</span> <span class="variable">$VENDOR</span><span class="operator">,</span> <span class="variable">$PRODUCT</span> <span class="operator">);</span>
+</pre>
+<pre>
+    <span class="keyword">printf</span> <span class="string">"Device: %04X:%04X\n"</span><span class="operator">,</span> <span class="variable">$dev</span><span class="operator">-&gt;</span><span class="variable">idVendor</span><span class="operator">(),</span> <span class="variable">$dev</span><span class="operator">-&gt;</span><span class="variable">idProduct</span><span class="operator">();</span>
+    <span class="keyword">print</span> <span class="string">"Manufactured by "</span><span class="operator">,</span> <span class="variable">$dev</span><span class="operator">-&gt;</span><span class="variable">manufacturer</span><span class="operator">(),</span> <span class="string">"\n"</span><span class="operator">,</span>
+          <span class="string">" Product: "</span><span class="operator">,</span> <span class="variable">$dev</span><span class="operator">-&gt;</span><span class="variable">product</span><span class="operator">(),</span> <span class="string">"\n"</span><span class="operator">;</span>
+</pre>
+<pre>
+    <span class="variable">$dev</span><span class="operator">-&gt;</span><span class="variable">set_configuration</span><span class="operator">(</span> <span class="variable">$CFG</span> <span class="operator">);</span>
+    <span class="variable">$dev</span><span class="operator">-&gt;</span><span class="variable">control_msg</span><span class="operator">(</span> <span class="variable">@params</span> <span class="operator">);</span>
+    <span class="operator">...</span>
+</pre>
+<p>See the libusb manual for more information about most of the methods. The
+functionality is generally the same as the libusb function whose name is
+the method name prepended with &quot;usb_&quot;.</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>This module defines a Perl object that represents the data and functionality
+associated with a USB device. The object interface provides read-only access
+to the important data associated with a device. It also provides methods for
+almost all of the functions supplied by libusb. Where necessary, the interfaces
+to these methods were changed to better match Perl usage. However, most of the
+methods are straight-forward wrappers around their libusb counterparts.</p>
+<p>
+</p>
+<h2><a name="methods">METHODS</a></h2>
+<dl>
+<dt><strong><a name="destroy" class="item">DESTROY</a></strong>
+
+<dd>
+<p>Close the device connected to the object.</p>
+</dd>
+</li>
+<dt><strong><a name="filename" class="item">filename</a></strong>
+
+<dd>
+<p>Retrieve the filename associated with the device.</p>
+</dd>
+</li>
+<dt><strong><a name="config" class="item">config</a></strong>
+
+<dd>
+<p>In list context, return a list of the configuration structures for this device.
+In scalar context, return a reference to that list. This method is deprecated
+in favor of the two new methods: configurations and get_configuration.</p>
+</dd>
+</li>
+<dt><strong><a name="configurations" class="item">configurations</a></strong>
+
+<dd>
+<p>In list context, return a list of the configuration structures for this device.
+In scalar context, return a reference to that list.</p>
+</dd>
+</li>
+<dt><strong><a name="get_configuration" class="item">get_configuration</a></strong>
+
+<dd>
+<p>Retrieve the configuration requested by index. The legal values are from 0
+to <a href="#bnumconfigurations"><code>bNumConfigurations()</code></a> - 1. Negative values access from the back of the list
+of configurations.</p>
+</dd>
+<dl>
+<dt><strong><a name="index_numeric_index_of_the_index_to_return_if_not_supplied_use_0" class="item">index numeric index of the index to return. If not supplied, use 0.</a></strong>
+
+</dl>
+<p>Returns an object encapsulating the configuration on success, or <a href="../../../../lib/pods/perlfunc.html#undef"><code>undef</code></a> on
+failure.</p>
+<dt><strong><a name="accessors" class="item">accessors</a></strong>
+
+<dd>
+<p>There a several accessor methods that return data from the device and device
+descriptor. Each is named after the field that they return. All of the BCD
+fields have been changed to floating point numbers, so that you don't have to
+decode them yourself.</p>
+</dd>
+<dd>
+<p>The methods include:</p>
+</dd>
+<dl>
+<dt><strong><a name="bcdusb" class="item">bcdUSB</a></strong>
+
+<dt><strong><a name="bdeviceclass" class="item">bDeviceClass</a></strong>
+
+<dt><strong><a name="bdevicesubclass" class="item">bDeviceSubClass</a></strong>
+
+<dt><strong><a name="bdeviceprotocol" class="item">bDeviceProtocol</a></strong>
+
+<dt><strong><a name="bmaxpacketsize0" class="item">bMaxPacketSize0</a></strong>
+
+<dt><strong><a name="idvendor" class="item">idVendor</a></strong>
+
+<dt><strong><a name="idproduct" class="item">idProduct</a></strong>
+
+<dt><strong><a name="bcddevice" class="item">bcdDevice</a></strong>
+
+<dt><strong><a name="imanufacturer" class="item">iManufacturer</a></strong>
+
+<dt><strong><a name="iproduct" class="item">iProduct</a></strong>
+
+<dt><strong><a name="iserialnumber" class="item">iSerialNumber</a></strong>
+
+<dt><strong><a name="bnumconfigurations" class="item">bNumConfigurations</a></strong>
+
+</dl>
+<dt><strong><a name="manufacturer" class="item">manufacturer</a></strong>
+
+<dd>
+<p>Retrieve the manufacture name from the device as a string.
+Return undef if the device read fails.</p>
+</dd>
+</li>
+<dt><strong><a name="product" class="item">product</a></strong>
+
+<dd>
+<p>Retrieve the product name from the device as a string.
+Return undef if the device read fails.</p>
+</dd>
+</li>
+<dt><strong><a name="serial_number" class="item">serial_number</a></strong>
+
+<dd>
+<p>Retrieve the serial number from the device as a string.
+Return undef if the device read fails.</p>
+</dd>
+</li>
+<dt><strong><a name="open" class="item">open</a></strong>
+
+<dd>
+<p>Open the device. If the device is already open, close it and reopen it.</p>
+</dd>
+<dd>
+<p>If the device fails to open, the reason will be available in $!.</p>
+</dd>
+</li>
+<dt><strong><a name="set_configuration" class="item">set_configuration</a></strong>
+
+<dd>
+<p>Sets the active configuration of the device.</p>
+</dd>
+<dl>
+<dt><strong><a name="configuration" class="item">configuration</a></strong>
+
+<dd>
+<p>the integer specified in the descriptor field bConfigurationValue.</p>
+</dd>
+</li>
+</dl>
+<p>returns 0 on success or &lt;0 on error</p>
+<p>When using libusb-win32 under Windows, it is important to call
+<a href="#set_configuration"><code>set_configuration()</code></a> after the <a href="#open"><code>open()</code></a> but before any other method calls.
+Without this call, other methods may not work. This call is not required under
+Linux.</p>
+<dt><strong><a name="set_altinterface" class="item">set_altinterface</a></strong>
+
+<dd>
+<p>Sets the active alternative setting of the current interface for the device.</p>
+</dd>
+<dl>
+<dt><strong><a name="alternate" class="item">alternate</a></strong>
+
+<dd>
+<p>the integer specified in the descriptor field bAlternateSetting.</p>
+</dd>
+</li>
+</dl>
+<p>returns 0 on success or &lt;0 on error</p>
+<dt><strong><a name="clear_halt" class="item">clear_halt</a></strong>
+
+<dd>
+<p>Clears any halt status on the supplied endpoint.</p>
+</dd>
+<dl>
+<dt><strong>alternate</strong>
+
+<dd>
+<p>the integer specified bEndpointAddress descriptor field.</p>
+</dd>
+</li>
+</dl>
+<p>returns 0 on success or &lt;0 on error</p>
+<dt><strong><a name="reset" class="item">reset</a></strong>
+
+<dd>
+<p>Resets the device. This also closes the handle and invalidates this device.
+This device will be unusable.</p>
+</dd>
+</li>
+<dt><strong><a name="claim_interface" class="item">claim_interface</a></strong>
+
+<dd>
+<p>Claims the specified interface with the operating system.</p>
+</dd>
+<dl>
+<dt><strong><a name="interface" class="item">interface</a></strong>
+
+<dd>
+<p>The interface value listed in the descriptor field bInterfaceNumber.</p>
+</dd>
+</li>
+</dl>
+<p>Returns 0 on success, &lt;0 on failure.</p>
+<dt><strong><a name="release_interface" class="item">release_interface</a></strong>
+
+<dd>
+<p>Releases the specified interface back to the operating system.</p>
+</dd>
+<dl>
+<dt><strong>interface</strong>
+
+<dd>
+<p>The interface value listed in the descriptor field bInterfaceNumber.</p>
+</dd>
+</li>
+</dl>
+<p>Returns 0 on success, &lt;0 on failure.</p>
+<dt><strong><a name="control_msg" class="item">control_msg</a></strong>
+
+<dd>
+<p>Performs a control request to the default control pipe on a device.</p>
+</dd>
+<dl>
+<dt><strong><a name="requesttype" class="item">requesttype</a></strong>
+
+<dt><strong><a name="request" class="item">request</a></strong>
+
+<dt><strong><a name="value" class="item">value</a></strong>
+
+<dt><strong><a name="index" class="item">index</a></strong>
+
+<dt><strong><a name="bytes" class="item">bytes</a></strong>
+
+<dd>
+<p>Any returned data is placed here. If you don't want any returned data,
+pass undef.</p>
+</dd>
+</li>
+<dt><strong><a name="size" class="item">size</a></strong>
+
+<dd>
+<p>Size of supplied buffer.</p>
+</dd>
+</li>
+<dt><strong><a name="timeout" class="item">timeout</a></strong>
+
+<dd>
+<p>Milliseconds to wait for response.</p>
+</dd>
+</li>
+</dl>
+<p>Returns number of bytes read or written on success, &lt;0 on failure.</p>
+<dt><strong><a name="get_string" class="item">get_string</a></strong>
+
+<dd>
+<p>Retrieve a string descriptor from the device.</p>
+</dd>
+<dl>
+<dt><strong>index</strong>
+
+<dd>
+<p>The index of the string in the string list.</p>
+</dd>
+</li>
+<dt><strong><a name="langid" class="item">langid</a></strong>
+
+<dd>
+<p>The language id used to specify which of the supported languages the string
+should be encoded in.</p>
+</dd>
+</li>
+</dl>
+<p>Returns a Unicode string. The function returns undef on error.</p>
+<dt><strong><a name="get_string_simple" class="item">get_string_simple</a></strong>
+
+<dd>
+<p>Retrieve a string descriptor from the device.</p>
+</dd>
+<dl>
+<dt><strong>index</strong>
+
+<dd>
+<p>The index of the string in the string list.</p>
+</dd>
+</li>
+</dl>
+<p>Returns a C-style string if successful, or undef on error.</p>
+<dt><strong><a name="get_descriptor" class="item">get_descriptor</a></strong>
+
+<dd>
+<p>Retrieve a descriptor from the device</p>
+</dd>
+<dl>
+<dt><strong><a name="type" class="item">type</a></strong>
+
+<dd>
+<p>The type of descriptor to retrieve.</p>
+</dd>
+</li>
+<dt><strong>index</strong>
+
+<dd>
+<p>The index of that descriptor in the list of descriptors of that type.</p>
+</dd>
+</li>
+</dl>
+<p>TODO: This method needs major rewrite to be Perl-ish.
+I need to provide a better way to specify the type (or at least document
+which are available), and I need to return a Perl data structure, not
+a buffer of binary data.</p>
+<dt><strong><a name="get_descriptor_by_endpoint" class="item">get_descriptor_by_endpoint</a></strong>
+
+<dd>
+<p>Retrieve an endpoint-specific descriptor from the device</p>
+</dd>
+<dl>
+<dt><strong><a name="ep" class="item">ep</a></strong>
+
+<dd>
+<p>Endpoint to query.</p>
+</dd>
+</li>
+<dt><strong>type</strong>
+
+<dd>
+<p>The type of descriptor to retrieve.</p>
+</dd>
+</li>
+<dt><strong>index</strong>
+
+<dd>
+<p>The index of that descriptor in the list of descriptors.</p>
+</dd>
+</li>
+<dt><strong><a name="buf" class="item">buf</a></strong>
+
+<dd>
+<p>Buffer into which to write the requested descriptor</p>
+</dd>
+</li>
+<dt><strong>size</strong>
+
+<dd>
+<p>Max size to read into the buffer.</p>
+</dd>
+</li>
+</dl>
+<p>TODO: This method needs major rewrite to be Perl-ish.
+I need to provide a better way to specify the type (or at least document
+which are available), and I need to return a Perl data structure, not
+a buffer of binary data.</p>
+<dt><strong><a name="bulk_read" class="item">bulk_read</a></strong>
+
+<dd>
+<p>Perform a bulk read request from the specified endpoint.</p>
+</dd>
+<dl>
+<dt><strong>ep</strong>
+
+<dd>
+<p>The number of the endpoint to read</p>
+</dd>
+</li>
+<dt><strong>bytes</strong>
+
+<dd>
+<p>Buffer into which to write the requested data.</p>
+</dd>
+</li>
+<dt><strong>size</strong>
+
+<dd>
+<p>Max size to read into the buffer.</p>
+</dd>
+</li>
+<dt><strong>timeout</strong>
+
+<dd>
+<p>Maximum time to wait (in milliseconds)</p>
+</dd>
+</li>
+</dl>
+<p>The function returns the number of bytes returned or &lt;0 on error.</p>
+<p>USB is packet based, not stream based. So using <a href="#bulk_read"><code>bulk_read()</code></a> to read part
+of the packet acts like a <em>peek</em>. The next time you read, all of the packet
+is still there.</p>
+<p>The data is only removed when you read the entire packet. For this reason, you
+should always call <a href="#bulk_read"><code>bulk_read()</code></a> with the total packet size.</p>
+<dt><strong><a name="interrupt_read" class="item">interrupt_read</a></strong>
+
+<dd>
+<p>Perform a interrupt read request from the specified endpoint.</p>
+</dd>
+<dl>
+<dt><strong>ep</strong>
+
+<dd>
+<p>The number of the endpoint to read</p>
+</dd>
+</li>
+<dt><strong>bytes</strong>
+
+<dd>
+<p>Buffer into which to write the requested data.</p>
+</dd>
+</li>
+<dt><strong>size</strong>
+
+<dd>
+<p>Max size to read into the buffer.</p>
+</dd>
+</li>
+<dt><strong>timeout</strong>
+
+<dd>
+<p>Maximum time to wait (in milliseconds)</p>
+</dd>
+</li>
+</dl>
+<p>The function returns the number of bytes returned or &lt;0 on error.</p>
+<dt><strong><a name="bulk_write" class="item">bulk_write</a></strong>
+
+<dd>
+<p>Perform a bulk write request to the specified endpoint.</p>
+</dd>
+<dl>
+<dt><strong>ep</strong>
+
+<dd>
+<p>The number of the endpoint to write</p>
+</dd>
+</li>
+<dt><strong>bytes</strong>
+
+<dd>
+<p>Buffer from which to write the requested data.</p>
+</dd>
+</li>
+<dt><strong>timeout</strong>
+
+<dd>
+<p>Maximum time to wait (in milliseconds)</p>
+</dd>
+</li>
+</dl>
+<p>The function returns the number of bytes written or &lt;0 on error.</p>
+<dt><strong><a name="interrupt_write" class="item">interrupt_write</a></strong>
+
+<dd>
+<p>Perform a interrupt write request to the specified endpoint.</p>
+</dd>
+<dl>
+<dt><strong>ep</strong>
+
+<dd>
+<p>The number of the endpoint to write</p>
+</dd>
+</li>
+<dt><strong>bytes</strong>
+
+<dd>
+<p>Buffer from which to write the requested data.</p>
+</dd>
+</li>
+<dt><strong>timeout</strong>
+
+<dd>
+<p>Maximum time to wait (in milliseconds)</p>
+</dd>
+</li>
+</dl>
+<p>The function returns the number of bytes written or &lt;0 on error.</p>
+<dt><strong><a name="get_driver_np" class="item">get_driver_np</a></strong>
+
+<dd>
+<p>This function returns the name of the driver bound to the interface
+specified by the parameter interface.</p>
+</dd>
+<dl>
+<dt><strong><a name="_interface" class="item">$interface</a></strong>
+
+<dd>
+<p>The interface number of interest.</p>
+</dd>
+</li>
+</dl>
+<p>Returns <a href="../../../../lib/pods/perlfunc.html#undef"><code>undef</code></a> on error.</p>
+<dt><strong><a name="detach_kernel_driver_np" class="item">detach_kernel_driver_np</a></strong>
+
+<dd>
+<p>This function will detach a kernel driver from the interface specified by
+parameter interface. Applications using libusb can then try claiming the
+interface. Returns 0 on success or &lt; 0 on error.</p>
+</dd>
+</li>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="diagnostics">DIAGNOSTICS</a></h1>
+<p>This is an explanation of the diagnostic and error messages this module
+can generate.</p>
+<dl>
+<dt><strong><a name="cannot_open_device_reason_string" class="item">Cannot open device: <em>reason string</em></a></strong>
+
+<dd>
+<p>Unable to open the USB device for the reason given.</p>
+</dd>
+</li>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="dependencies">DEPENDENCIES</a></h1>
+<p>This module depends on the Carp, Inline and Inline::C modules, as well as
+the strict and warnings pragmas. Obviously, libusb must be available since
+that is the entire reason for the module's existence.</p>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>G. Wade Johnson (wade at anomaly dot org)
+Paul Archer (paul at paularcher dot org)</p>
+<p>Houston Perl Mongers Group</p>
+<p>
+</p>
+<hr />
+<h1><a name="bugs">BUGS</a></h1>
+<p>Please report any bugs or feature requests to
+<code>bug-device-usb@rt.cpan.org</code>, or through the web interface at
+<a href="http://rt.cpan.org/NoAuth/ReportBug.html?Device::USB">http://rt.cpan.org/NoAuth/ReportBug.html</a>.
+I will be notified, and then you'll automatically be notified of progress on
+your bug as I make changes.</p>
+<p>
+</p>
+<hr />
+<h1><a name="acknowledgements">ACKNOWLEDGEMENTS</a></h1>
+<p>Thanks go to various members of the Houston Perl Mongers group for input
+on the module. But thanks mostly go to Paul Archer who proposed the project
+and helped with the development.</p>
+<p>
+</p>
+<hr />
+<h1><a name="copyright___license">COPYRIGHT &amp; LICENSE</a></h1>
+<p>Copyright 2006 Houston Perl Mongers</p>
+<p>This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.</p>
+
+</body>
+
+</html>

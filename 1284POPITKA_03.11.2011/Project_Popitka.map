@@ -1,0 +1,25 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+__ds1820_scratch_pad                                              1100h        9
+rx_buffer0                                                        1109h        8
+tx_buffer0                                                        1111h        8
+_base_y                                                           1119h        4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+rx_wr_index0                                                      R4           1
+rx_rd_index0                                                      R3           1
+rx_counter0                                                       R6           1
+rx_buffer_overflow0                                               GPIOR0.0  1bit
+tx_wr_index0                                                      R5           1
+tx_rd_index0                                                      R8           1
+tx_counter0                                                       R7           1
+_lcd_x                                                            R10          1
+_lcd_y                                                            R9           1
+_lcd_maxx                                                         R12          1

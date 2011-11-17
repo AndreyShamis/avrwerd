@@ -1,0 +1,4 @@
+VERSION:3 SOURCE_TIMESTAMP:3F578537
+NODE:I LEVEL:0 LINE:24 "C:\cvavr2\inc\mega32.h"
+NODE:I LEVEL:0 LINE:30 "C:\cvavr2\inc\lcd.h"
+NODE:F LEVEL:0 LINE:34 "main(void)"
