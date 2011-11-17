@@ -1,0 +1,790 @@
+   1               		.file	"main.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               	/* #APP */
+  17               		.equ __lcd_port=0x1B PORTA
+  18               	/* #NOAPP */
+  19               	.global	DisableLeds
+  21               	DisableLeds:
+  22               	.LFB7:
+  23               	.LM1:
+  24               	/* prologue: function */
+  25               	/* frame size = 0 */
+  26               	.LM2:
+  27 ???? 80E0      		ldi r24,lo8(28)
+  28 ???? 85BB      		out 53-32,r24
+  29               	/* epilogue start */
+  30               	.LM3:
+  31 ???? 0895      		ret
+  32               	.LFE7:
+  34               	.global	main
+  36               	main:
+  37               	.LFB10:
+  38               	.LM4:
+  39               	/* prologue: function */
+  40               	/* frame size = 0 */
+  41               	.LM5:
+  42 ???? 1BBA      		out 59-32,__zero_reg__
+  43               	.LM6:
+  44 ???? 80E0      		ldi r24,lo8(-1)
+  45 ???? 8ABB      		out 58-32,r24
+  46               	.LM7:
+  47 ???? 90E0      		ldi r25,lo8(1)
+  48 ???? 98BB      		out 56-32,r25
+  49               	.LM8:
+  50 ???? 97BB      		out 55-32,r25
+  51               	.LM9:
+  52 ???? 80E0      		ldi r24,lo8(-59)
+  53 ???? 84BB      		out 52-32,r24
+  54               	.LM10:
+  55 ???? 95BB      		out 53-32,r25
+  56               	.LM11:
+  57 ???? 1FBC      		out 79-32,__zero_reg__
+  58               	.LM12:
+  59 ???? 1EBC      		out 78-32,__zero_reg__
+  60               	.LM13:
+  61 ???? 1DBC      		out 77-32,__zero_reg__
+  62               	.LM14:
+  63 ???? 1CBC      		out 76-32,__zero_reg__
+  64               	.LM15:
+  65 ???? 15BC      		out 69-32,__zero_reg__
+  66               	.LM16:
+  67 ???? 14BC      		out 68-32,__zero_reg__
+  68               	.LM17:
+  69 ???? 1BBC      		out 75-32,__zero_reg__
+  70               	.LM18:
+  71 ???? 1ABC      		out 74-32,__zero_reg__
+  72               	.LM19:
+  73 ???? 19BC      		out 73-32,__zero_reg__
+  74               	.LM20:
+  75 ???? 18BC      		out 72-32,__zero_reg__
+  76               	.LM21:
+  77 ???? 8BB7      		in r24,91-32
+  78 ???? 8060      		ori r24,lo8(64)
+  79 ???? 8BBF      		out 91-32,r24
+  80               	.LM22:
+  81 ???? 15BE      		out 85-32,__zero_reg__
+  82               	.LM23:
+  83 ???? 16BE      		out 86-32,__zero_reg__
+  84               	.LM24:
+  85 ???? 80E0      		ldi r24,lo8(64)
+  86 ???? 8ABF      		out 90-32,r24
+  87               	.LM25:
+  88 ???? 19BE      		out 89-32,__zero_reg__
+  89               	.LM26:
+  90 ???? 80E0      		ldi r24,lo8(-128)
+  91 ???? 88B9      		out 40-32,r24
+  92               	.LM27:
+  93 ???? 10BE      		out 80-32,__zero_reg__
+  94               	.LBB26:
+  95               	.LBB27:
+  96               	.LM28:
+  97 ???? 80E0      		ldi r24,lo8(28)
+  98 ???? 85BB      		out 53-32,r24
+  99 ???? 80E0      		ldi r24,lo8(1200)
+ 100 ???? 90E0      		ldi r25,hi8(1200)
+ 101               	.LVL0:
+ 102               	.LBE27:
+ 103               	.LBE26:
+ 104               	.LBB28:
+ 105               	.LBB29:
+ 106               	.LBB30:
+ 107               	.LBB31:
+ 108               	.LM29:
+ 109 ???? 20E0      		ldi r18,lo8(400)
+ 110 ???? 30E0      		ldi r19,hi8(400)
+ 111               	.L4:
+ 112 ???? F901      		movw r30,r18
+ 113               	.LVL1:
+ 114               	/* #APP */
+ 115               	 ;  105 "c:/winavr-20100110/lib/gcc/../../avr/include/util/delay_basic.h" 1
+ 116 ???? 3097      		1: sbiw r30,1
+ 117 ???? 01F4      		brne 1b
+ 118               	 ;  0 "" 2
+ 119               	/* #NOAPP */
+ 120               	.LBE31:
+ 121               	.LBE30:
+ 122               	.LM30:
+ 123 ???? 0097      		sbiw r24,1
+ 124               	.LM31:
+ 125 ???? 01F4      		brne .L4
+ 126 ???? 20E0      		ldi r18,lo8(1)
+ 127 ???? 30E0      		ldi r19,hi8(1)
+ 128               	.LVL2:
+ 129               	.LBE29:
+ 130               	.LBE28:
+ 131               	.LBB32:
+ 132               	.LBB33:
+ 133               	.LBB34:
+ 134               	.LBB35:
+ 135               	.LM32:
+ 136 ???? 60E0      		ldi r22,lo8(-25536)
+ 137 ???? 70E0      		ldi r23,hi8(-25536)
+ 138               	.LBE35:
+ 139               	.LBE34:
+ 140               	.LBE33:
+ 141               	.LBE32:
+ 142               	.LBB39:
+ 143               	.LBB40:
+ 144               	.LBB41:
+ 145               	.LBB42:
+ 146 ???? 40E0      		ldi r20,lo8(400)
+ 147 ???? 50E0      		ldi r21,hi8(400)
+ 148               	.LVL3:
+ 149               	.L7:
+ 150               	.LBE42:
+ 151               	.LBE41:
+ 152               	.LBE40:
+ 153               	.LBE39:
+ 154               	.LM33:
+ 155 ???? 2050      		subi r18,lo8(-(1))
+ 156 ???? 3040      		sbci r19,hi8(-(1))
+ 157               	.LM34:
+ 158 ???? 80E0      		ldi r24,hi8(501)
+ 159 ???? 2030      		cpi r18,lo8(501)
+ 160 ???? 3807      		cpc r19,r24
+ 161               	.LVL4:
+ 162 ???? 00F0      		brlo .L5
+ 163               	.LBB46:
+ 164               	.LBB38:
+ 165               	.LBB37:
+ 166               	.LBB36:
+ 167               	.LM35:
+ 168 ???? CB01      		movw r24,r22
+ 169               	.LVL5:
+ 170               	/* #APP */
+ 171               	 ;  105 "c:/winavr-20100110/lib/gcc/../../avr/include/util/delay_basic.h" 1
+ 172 ???? 0097      		1: sbiw r24,1
+ 173 ???? 01F4      		brne 1b
+ 174               	 ;  0 "" 2
+ 175               	/* #NOAPP */
+ 176 ???? 20E0      		ldi r18,lo8(1)
+ 177 ???? 30E0      		ldi r19,hi8(1)
+ 178               	.L5:
+ 179 ???? 80E0      		ldi r24,lo8(1200)
+ 180 ???? 90E0      		ldi r25,hi8(1200)
+ 181               	.LVL6:
+ 182               	.L6:
+ 183               	.LBE36:
+ 184               	.LBE37:
+ 185               	.LBE38:
+ 186               	.LBE46:
+ 187               	.LBB47:
+ 188               	.LBB45:
+ 189               	.LBB44:
+ 190               	.LBB43:
+ 191 ???? FA01      		movw r30,r20
+ 192               	.LVL7:
+ 193               	/* #APP */
+ 194               	 ;  105 "c:/winavr-20100110/lib/gcc/../../avr/include/util/delay_basic.h" 1
+ 195 ???? 3097      		1: sbiw r30,1
+ 196 ???? 01F4      		brne 1b
+ 197               	 ;  0 "" 2
+ 198               	/* #NOAPP */
+ 199               	.LBE43:
+ 200               	.LBE44:
+ 201               	.LM36:
+ 202 ???? 0097      		sbiw r24,1
+ 203               	.LM37:
+ 204 ???? 01F4      		brne .L6
+ 205               	.LBE45:
+ 206               	.LBE47:
+ 207               	.LM38:
+ 208 ???? 80E0      		ldi r24,hi8(1000)
+ 209 ???? 2030      		cpi r18,lo8(1000)
+ 210 ???? 3807      		cpc r19,r24
+ 211               	.LVL8:
+ 212 ???? 00F0      		brlo .L7
+ 213               	.LM39:
+ 214 ???? 80E0      		ldi r24,lo8(0)
+ 215 ???? 90E0      		ldi r25,hi8(0)
+ 216               	/* epilogue start */
+ 217 ???? 0895      		ret
+ 218               	.LFE10:
+ 220               		.data
+ 221               	.LC0:
+ 222 ???? 4545 4352 		.string	"EECR-%d:EEARH-%d"
+ 222      2D25 643A 
+ 222      4545 4152 
+ 222      482D 2564 
+ 222      00
+ 223               	.LC1:
+ 224 ???? 5049 4E41 		.string	"PINA-%d:PINB-%d"
+ 224      2D25 643A 
+ 224      5049 4E42 
+ 224      2D25 6400 
+ 225               	.LC2:
+ 226 ???? 5049 4E43 		.string	"PINC-%d:PIND-%d"
+ 226      2D25 643A 
+ 226      5049 4E44 
+ 226      2D25 6400 
+ 227               	.LC3:
+ 228 ???? 5542 5252 		.string	"UBRRH-%d:UCSRC-%d"
+ 228      482D 2564 
+ 228      3A55 4353 
+ 228      5243 2D25 
+ 228      6400 
+ 229               	.LC4:
+ 230 ???? 5352 4547 		.string	"SREG-%d:SPH-%d"
+ 230      2D25 643A 
+ 230      5350 482D 
+ 230      2564 00
+ 231               	.LC5:
+ 232 ???? 4352 2D25 		.string	"CR-%d:CSR-%d"
+ 232      643A 4353 
+ 232      522D 2564 
+ 232      00
+ 233               	.LC6:
+ 234 ???? 5350 482D 		.string	"SPH-%d:SPL-%d"
+ 234      2564 3A53 
+ 234      504C 2D25 
+ 234      6400 
+ 235               	.LC7:
+ 236 ???? 4749 4352 		.string	"GICR-%d:GIFR-%d"
+ 236      2D25 643A 
+ 236      4749 4652 
+ 236      2D25 6400 
+ 237               	.LC8:
+ 238 ???? 4143 5352 		.string	"ACSR%d:OSAL%d"
+ 238      2564 3A4F 
+ 238      5341 4C25 
+ 238      6400 
+ 239               	.LC9:
+ 240 ???? 4865 6C6C 		.string	"Hello Alexey"
+ 240      6F20 416C 
+ 240      6578 6579 
+ 240      00
+ 241               	.LC10:
+ 242 ???? 436F 6D6D 		.string	"Comm %d"
+ 242      2025 6400 
+ 243               		.text
+ 244               	.global	DoCommand
+ 246               	DoCommand:
+ 247               	.LFB9:
+ 248               	.LM40:
+ 249               	.LVL9:
+ 250 ???? DF93      		push r29
+ 251 ???? CF93      		push r28
+ 252 ???? CDB7      		in r28,__SP_L__
+ 253 ???? DEB7      		in r29,__SP_H__
+ 254 ???? 2097      		sbiw r28,17
+ 255 ???? 0FB6      		in __tmp_reg__,__SREG__
+ 256 ???? F894      		cli
+ 257 ???? DEBF      		out __SP_H__,r29
+ 258 ???? 0FBE      		out __SREG__,__tmp_reg__
+ 259 ???? CDBF      		out __SP_L__,r28
+ 260               	/* prologue: function */
+ 261               	/* frame size = 17 */
+ 262 ???? 9C01      		movw r18,r24
+ 263               	.LM41:
+ 264 ???? DE01      		movw r26,r28
+ 265 ???? 1096      		adiw r26,1
+ 266 ???? 80E0      		ldi r24,lo8(17)
+ 267               	.LVL10:
+ 268 ???? FD01      		movw r30,r26
+ 269 ???? 1192      		st Z+,__zero_reg__
+ 270 ???? 8A95      	        dec r24
+ 271 ???? 01F4      		brne .-6
+ 272               	.LM42:
+ 273 ???? F901      		movw r30,r18
+ 274 ???? 3097      		sbiw r30,1
+ 275 ???? E030      		cpi r30,33
+ 276 ???? F105      		cpc r31,__zero_reg__
+ 277 ???? 00F0      		brlo .+2
+ 278 ???? 00C0      		rjmp .L13
+ 279 ???? E050      		subi r30,lo8(-(gs(.L26)))
+ 280 ???? F040      		sbci r31,hi8(-(gs(.L26)))
+ 281 ???? CD01      		movw r24,r26
+ 282 ???? 0994      		ijmp
+ 283               		.data
+ 284               		.section .progmem.gcc_sw_table, "ax", @progbits
+ 285               		.p2align 1
+ 286               	.L26:
+ 287               		.data
+ 288               		.section .progmem.gcc_sw_table, "ax", @progbits
+ 289               		.p2align 1
+ 290 ???? 00C0      		rjmp .L19
+ 291 ???? 00C0      		rjmp .L15
+ 292 ???? 00C0      		rjmp .L16
+ 293 ???? 00C0      		rjmp .L13
+ 294 ???? 00C0      		rjmp .L13
+ 295 ???? 00C0      		rjmp .L13
+ 296 ???? 00C0      		rjmp .L13
+ 297 ???? 00C0      		rjmp .L13
+ 298 ???? 00C0      		rjmp .L13
+ 299 ???? 00C0      		rjmp .L13
+ 300 ???? 00C0      		rjmp .L17
+ 301 ???? 00C0      		rjmp .L18
+ 302 ???? 00C0      		rjmp .L19
+ 303 ???? 00C0      		rjmp .L13
+ 304 ???? 00C0      		rjmp .L13
+ 305 ???? 00C0      		rjmp .L13
+ 306 ???? 00C0      		rjmp .L13
+ 307 ???? 00C0      		rjmp .L13
+ 308 ???? 00C0      		rjmp .L13
+ 309 ???? 00C0      		rjmp .L13
+ 310 ???? 00C0      		rjmp .L20
+ 311 ???? 00C0      		rjmp .L21
+ 312 ???? 00C0      		rjmp .L25
+ 313 ???? 00C0      		rjmp .L13
+ 314 ???? 00C0      		rjmp .L13
+ 315 ???? 00C0      		rjmp .L13
+ 316 ???? 00C0      		rjmp .L13
+ 317 ???? 00C0      		rjmp .L13
+ 318 ???? 00C0      		rjmp .L13
+ 319 ???? 00C0      		rjmp .L13
+ 320 ???? 00C0      		rjmp .L23
+ 321 ???? 00C0      		rjmp .L24
+ 322 ???? 00C0      		rjmp .L25
+ 323               		.text
+ 324               	.L15:
+ 325               	.LM43:
+ 326 ???? 29B3      		in r18,57-32
+ 327               	.LVL11:
+ 328 ???? 36B3      		in r19,54-32
+ 329 ???? 4DB7      		in r20,__SP_L__
+ 330 ???? 5EB7      		in r21,__SP_H__
+ 331 ???? 4050      		subi r20,lo8(-(-8))
+ 332 ???? 5040      		sbci r21,hi8(-(-8))
+ 333 ???? 0FB6      		in __tmp_reg__,__SREG__
+ 334 ???? F894      		cli
+ 335 ???? 5EBF      		out __SP_H__,r21
+ 336 ???? 0FBE      		out __SREG__,__tmp_reg__
+ 337 ???? 4DBF      		out __SP_L__,r20
+ 338 ???? EDB7      		in r30,__SP_L__
+ 339 ???? FEB7      		in r31,__SP_H__
+ 340 ???? 3096      		adiw r30,1
+ 341 ???? ADB7      		in r26,__SP_L__
+ 342 ???? BEB7      		in r27,__SP_H__
+ 343 ???? 1096      		adiw r26,1
+ 344 ???? 8C93      		st X,r24
+ 345 ???? 1097      		sbiw r26,1
+ 346 ???? 1096      		adiw r26,2
+ 347 ???? 9C93      		st X,r25
+ 348 ???? 80E0      		ldi r24,lo8(.LC1)
+ 349 ???? 90E0      		ldi r25,hi8(.LC1)
+ 350 ???? 00C0      		rjmp .L30
+ 351               	.LVL12:
+ 352               	.L16:
+ 353               	.LM44:
+ 354 ???? 23B3      		in r18,51-32
+ 355               	.LVL13:
+ 356 ???? 30B3      		in r19,48-32
+ 357 ???? 4DB7      		in r20,__SP_L__
+ 358 ???? 5EB7      		in r21,__SP_H__
+ 359 ???? 4050      		subi r20,lo8(-(-8))
+ 360 ???? 5040      		sbci r21,hi8(-(-8))
+ 361 ???? 0FB6      		in __tmp_reg__,__SREG__
+ 362 ???? F894      		cli
+ 363 ???? 5EBF      		out __SP_H__,r21
+ 364 ???? 0FBE      		out __SREG__,__tmp_reg__
+ 365 ???? 4DBF      		out __SP_L__,r20
+ 366 ???? EDB7      		in r30,__SP_L__
+ 367 ???? FEB7      		in r31,__SP_H__
+ 368 ???? 3096      		adiw r30,1
+ 369 ???? ADB7      		in r26,__SP_L__
+ 370 ???? BEB7      		in r27,__SP_H__
+ 371 ???? 1096      		adiw r26,1
+ 372 ???? 8C93      		st X,r24
+ 373 ???? 1097      		sbiw r26,1
+ 374 ???? 1096      		adiw r26,2
+ 375 ???? 9C93      		st X,r25
+ 376 ???? 80E0      		ldi r24,lo8(.LC2)
+ 377 ???? 90E0      		ldi r25,hi8(.LC2)
+ 378 ???? 00C0      		rjmp .L30
+ 379               	.LVL14:
+ 380               	.L17:
+ 381               	.LM45:
+ 382 ???? 20B5      		in r18,64-32
+ 383               	.LVL15:
+ 384 ???? 30B5      		in r19,64-32
+ 385 ???? 4DB7      		in r20,__SP_L__
+ 386 ???? 5EB7      		in r21,__SP_H__
+ 387 ???? 4050      		subi r20,lo8(-(-8))
+ 388 ???? 5040      		sbci r21,hi8(-(-8))
+ 389 ???? 0FB6      		in __tmp_reg__,__SREG__
+ 390 ???? F894      		cli
+ 391 ???? 5EBF      		out __SP_H__,r21
+ 392 ???? 0FBE      		out __SREG__,__tmp_reg__
+ 393 ???? 4DBF      		out __SP_L__,r20
+ 394 ???? EDB7      		in r30,__SP_L__
+ 395 ???? FEB7      		in r31,__SP_H__
+ 396 ???? 3096      		adiw r30,1
+ 397 ???? ADB7      		in r26,__SP_L__
+ 398 ???? BEB7      		in r27,__SP_H__
+ 399 ???? 1096      		adiw r26,1
+ 400 ???? 8C93      		st X,r24
+ 401 ???? 1097      		sbiw r26,1
+ 402 ???? 1096      		adiw r26,2
+ 403 ???? 9C93      		st X,r25
+ 404 ???? 80E0      		ldi r24,lo8(.LC3)
+ 405 ???? 90E0      		ldi r25,hi8(.LC3)
+ 406 ???? 00C0      		rjmp .L30
+ 407               	.LVL16:
+ 408               	.L18:
+ 409               	.LM46:
+ 410 ???? 2FB7      		in r18,__SREG__
+ 411               	.LVL17:
+ 412 ???? 3EB7      		in r19,94-32
+ 413 ???? 4DB7      		in r20,__SP_L__
+ 414 ???? 5EB7      		in r21,__SP_H__
+ 415 ???? 4050      		subi r20,lo8(-(-8))
+ 416 ???? 5040      		sbci r21,hi8(-(-8))
+ 417 ???? 0FB6      		in __tmp_reg__,__SREG__
+ 418 ???? F894      		cli
+ 419 ???? 5EBF      		out __SP_H__,r21
+ 420 ???? 0FBE      		out __SREG__,__tmp_reg__
+ 421 ???? 4DBF      		out __SP_L__,r20
+ 422 ???? EDB7      		in r30,__SP_L__
+ 423 ???? FEB7      		in r31,__SP_H__
+ 424 ???? 3096      		adiw r30,1
+ 425 ???? ADB7      		in r26,__SP_L__
+ 426 ???? BEB7      		in r27,__SP_H__
+ 427 ???? 1096      		adiw r26,1
+ 428 ???? 8C93      		st X,r24
+ 429 ???? 1097      		sbiw r26,1
+ 430 ???? 1096      		adiw r26,2
+ 431 ???? 9C93      		st X,r25
+ 432 ???? 80E0      		ldi r24,lo8(.LC4)
+ 433 ???? 90E0      		ldi r25,hi8(.LC4)
+ 434 ???? 00C0      		rjmp .L30
+ 435               	.LVL18:
+ 436               	.L19:
+ 437               	.LM47:
+ 438 ???? 2CB3      		in r18,60-32
+ 439               	.LVL19:
+ 440 ???? 3FB3      		in r19,63-32
+ 441 ???? 4DB7      		in r20,__SP_L__
+ 442 ???? 5EB7      		in r21,__SP_H__
+ 443 ???? 4050      		subi r20,lo8(-(-8))
+ 444 ???? 5040      		sbci r21,hi8(-(-8))
+ 445 ???? 0FB6      		in __tmp_reg__,__SREG__
+ 446 ???? F894      		cli
+ 447 ???? 5EBF      		out __SP_H__,r21
+ 448 ???? 0FBE      		out __SREG__,__tmp_reg__
+ 449 ???? 4DBF      		out __SP_L__,r20
+ 450 ???? EDB7      		in r30,__SP_L__
+ 451 ???? FEB7      		in r31,__SP_H__
+ 452 ???? 3096      		adiw r30,1
+ 453 ???? ADB7      		in r26,__SP_L__
+ 454 ???? BEB7      		in r27,__SP_H__
+ 455 ???? 1096      		adiw r26,1
+ 456 ???? 8C93      		st X,r24
+ 457 ???? 1097      		sbiw r26,1
+ 458 ???? 1096      		adiw r26,2
+ 459 ???? 9C93      		st X,r25
+ 460 ???? 80E0      		ldi r24,lo8(.LC0)
+ 461 ???? 90E0      		ldi r25,hi8(.LC0)
+ 462 ???? 00C0      		rjmp .L30
+ 463               	.LVL20:
+ 464               	.L20:
+ 465               	.LM48:
+ 466 ???? 25B7      		in r18,85-32
+ 467               	.LVL21:
+ 468 ???? 34B7      		in r19,84-32
+ 469 ???? 4DB7      		in r20,__SP_L__
+ 470 ???? 5EB7      		in r21,__SP_H__
+ 471 ???? 4050      		subi r20,lo8(-(-8))
+ 472 ???? 5040      		sbci r21,hi8(-(-8))
+ 473 ???? 0FB6      		in __tmp_reg__,__SREG__
+ 474 ???? F894      		cli
+ 475 ???? 5EBF      		out __SP_H__,r21
+ 476 ???? 0FBE      		out __SREG__,__tmp_reg__
+ 477 ???? 4DBF      		out __SP_L__,r20
+ 478 ???? EDB7      		in r30,__SP_L__
+ 479 ???? FEB7      		in r31,__SP_H__
+ 480 ???? 3096      		adiw r30,1
+ 481 ???? ADB7      		in r26,__SP_L__
+ 482 ???? BEB7      		in r27,__SP_H__
+ 483 ???? 1096      		adiw r26,1
+ 484 ???? 8C93      		st X,r24
+ 485 ???? 1097      		sbiw r26,1
+ 486 ???? 1096      		adiw r26,2
+ 487 ???? 9C93      		st X,r25
+ 488 ???? 80E0      		ldi r24,lo8(.LC5)
+ 489 ???? 90E0      		ldi r25,hi8(.LC5)
+ 490 ???? 00C0      		rjmp .L30
+ 491               	.LVL22:
+ 492               	.L21:
+ 493               	.LM49:
+ 494 ???? 2EB7      		in r18,94-32
+ 495               	.LVL23:
+ 496 ???? 3DB7      		in r19,93-32
+ 497 ???? 4DB7      		in r20,__SP_L__
+ 498 ???? 5EB7      		in r21,__SP_H__
+ 499 ???? 4050      		subi r20,lo8(-(-8))
+ 500 ???? 5040      		sbci r21,hi8(-(-8))
+ 501 ???? 0FB6      		in __tmp_reg__,__SREG__
+ 502 ???? F894      		cli
+ 503 ???? 5EBF      		out __SP_H__,r21
+ 504 ???? 0FBE      		out __SREG__,__tmp_reg__
+ 505 ???? 4DBF      		out __SP_L__,r20
+ 506 ???? EDB7      		in r30,__SP_L__
+ 507 ???? FEB7      		in r31,__SP_H__
+ 508 ???? 3096      		adiw r30,1
+ 509 ???? ADB7      		in r26,__SP_L__
+ 510 ???? BEB7      		in r27,__SP_H__
+ 511 ???? 1096      		adiw r26,1
+ 512 ???? 8C93      		st X,r24
+ 513 ???? 1097      		sbiw r26,1
+ 514 ???? 1096      		adiw r26,2
+ 515 ???? 9C93      		st X,r25
+ 516 ???? 80E0      		ldi r24,lo8(.LC6)
+ 517 ???? 90E0      		ldi r25,hi8(.LC6)
+ 518 ???? 00C0      		rjmp .L30
+ 519               	.LVL24:
+ 520               	.L23:
+ 521               	.LM50:
+ 522 ???? 28B1      		in r18,40-32
+ 523               	.LVL25:
+ 524 ???? 34B1      		in r19,36-32
+ 525 ???? 4DB7      		in r20,__SP_L__
+ 526 ???? 5EB7      		in r21,__SP_H__
+ 527 ???? 4050      		subi r20,lo8(-(-8))
+ 528 ???? 5040      		sbci r21,hi8(-(-8))
+ 529 ???? 0FB6      		in __tmp_reg__,__SREG__
+ 530 ???? F894      		cli
+ 531 ???? 5EBF      		out __SP_H__,r21
+ 532 ???? 0FBE      		out __SREG__,__tmp_reg__
+ 533 ???? 4DBF      		out __SP_L__,r20
+ 534 ???? EDB7      		in r30,__SP_L__
+ 535 ???? FEB7      		in r31,__SP_H__
+ 536 ???? 3096      		adiw r30,1
+ 537 ???? ADB7      		in r26,__SP_L__
+ 538 ???? BEB7      		in r27,__SP_H__
+ 539 ???? 1096      		adiw r26,1
+ 540 ???? 8C93      		st X,r24
+ 541 ???? 1097      		sbiw r26,1
+ 542 ???? 1096      		adiw r26,2
+ 543 ???? 9C93      		st X,r25
+ 544 ???? 80E0      		ldi r24,lo8(.LC8)
+ 545 ???? 90E0      		ldi r25,hi8(.LC8)
+ 546 ???? 00C0      		rjmp .L30
+ 547               	.LVL26:
+ 548               	.L24:
+ 549               	.LM51:
+ 550 ???? 60E0      		ldi r22,lo8(.LC9)
+ 551 ???? 70E0      		ldi r23,hi8(.LC9)
+ 552 ???? 00D0      		rcall strcpy
+ 553               	.LVL27:
+ 554 ???? 00C0      		rjmp .L28
+ 555               	.LVL28:
+ 556               	.L25:
+ 557               	.LM52:
+ 558 ???? 2BB7      		in r18,91-32
+ 559               	.LVL29:
+ 560 ???? 3AB7      		in r19,90-32
+ 561 ???? 4DB7      		in r20,__SP_L__
+ 562 ???? 5EB7      		in r21,__SP_H__
+ 563 ???? 4050      		subi r20,lo8(-(-8))
+ 564 ???? 5040      		sbci r21,hi8(-(-8))
+ 565 ???? 0FB6      		in __tmp_reg__,__SREG__
+ 566 ???? F894      		cli
+ 567 ???? 5EBF      		out __SP_H__,r21
+ 568 ???? 0FBE      		out __SREG__,__tmp_reg__
+ 569 ???? 4DBF      		out __SP_L__,r20
+ 570 ???? EDB7      		in r30,__SP_L__
+ 571 ???? FEB7      		in r31,__SP_H__
+ 572 ???? 3096      		adiw r30,1
+ 573 ???? ADB7      		in r26,__SP_L__
+ 574 ???? BEB7      		in r27,__SP_H__
+ 575 ???? 1096      		adiw r26,1
+ 576 ???? 8C93      		st X,r24
+ 577 ???? 1097      		sbiw r26,1
+ 578 ???? 1096      		adiw r26,2
+ 579 ???? 9C93      		st X,r25
+ 580 ???? 80E0      		ldi r24,lo8(.LC7)
+ 581 ???? 90E0      		ldi r25,hi8(.LC7)
+ 582               	.L30:
+ 583 ???? 9083      		std Z+3,r25
+ 584 ???? 8083      		std Z+2,r24
+ 585 ???? 2083      		std Z+4,r18
+ 586 ???? 1082      		std Z+5,__zero_reg__
+ 587 ???? 3083      		std Z+6,r19
+ 588 ???? 1082      		std Z+7,__zero_reg__
+ 589 ???? 00D0      		rcall sprintf
+ 590 ???? EDB7      		in r30,__SP_L__
+ 591 ???? FEB7      		in r31,__SP_H__
+ 592 ???? 3096      		adiw r30,8
+ 593 ???? 00C0      		rjmp .L29
+ 594               	.LVL30:
+ 595               	.L13:
+ 596               	.LM53:
+ 597 ???? 00D0      		rcall .
+ 598 ???? 00D0      		rcall .
+ 599 ???? 00D0      		rcall .
+ 600 ???? EDB7      		in r30,__SP_L__
+ 601 ???? FEB7      		in r31,__SP_H__
+ 602 ???? 3096      		adiw r30,1
+ 603 ???? CE01      		movw r24,r28
+ 604 ???? 0096      		adiw r24,1
+ 605 ???? ADB7      		in r26,__SP_L__
+ 606 ???? BEB7      		in r27,__SP_H__
+ 607 ???? 1096      		adiw r26,1+1
+ 608 ???? 9C93      		st X,r25
+ 609 ???? 8E93      		st -X,r24
+ 610 ???? 1097      		sbiw r26,1
+ 611 ???? 80E0      		ldi r24,lo8(.LC10)
+ 612 ???? 90E0      		ldi r25,hi8(.LC10)
+ 613 ???? 9083      		std Z+3,r25
+ 614 ???? 8083      		std Z+2,r24
+ 615 ???? 3083      		std Z+5,r19
+ 616 ???? 2083      		std Z+4,r18
+ 617 ???? 00D0      		rcall sprintf
+ 618               	.LVL31:
+ 619 ???? EDB7      		in r30,__SP_L__
+ 620 ???? FEB7      		in r31,__SP_H__
+ 621 ???? 3096      		adiw r30,6
+ 622               	.L29:
+ 623 ???? 0FB6      		in __tmp_reg__,__SREG__
+ 624 ???? F894      		cli
+ 625 ???? FEBF      		out __SP_H__,r31
+ 626 ???? 0FBE      		out __SREG__,__tmp_reg__
+ 627 ???? EDBF      		out __SP_L__,r30
+ 628               	.L28:
+ 629               	/* epilogue start */
+ 630               	.LM54:
+ 631 ???? 2096      		adiw r28,17
+ 632 ???? 0FB6      		in __tmp_reg__,__SREG__
+ 633 ???? F894      		cli
+ 634 ???? DEBF      		out __SP_H__,r29
+ 635 ???? 0FBE      		out __SREG__,__tmp_reg__
+ 636 ???? CDBF      		out __SP_L__,r28
+ 637 ???? CF91      		pop r28
+ 638 ???? DF91      		pop r29
+ 639 ???? 0895      		ret
+ 640               	.LFE9:
+ 642               		.data
+ 643               	.LC11:
+ 644 ???? 494E 5430 		.string	"INT0"
+ 644      00
+ 645               		.text
+ 646               	.global	__vector_1
+ 648               	__vector_1:
+ 649               	.LFB8:
+ 650               	.LM55:
+ 651 ???? 1F92      		push __zero_reg__
+ 652 ???? 0F92      		push r0
+ 653 ???? 0FB6      		in r0,__SREG__
+ 654 ???? 0F92      		push r0
+ 655 ???? 1124      		clr __zero_reg__
+ 656 ???? FF92      		push r15
+ 657 ???? 0F93      		push r16
+ 658 ???? 1F93      		push r17
+ 659 ???? 2F93      		push r18
+ 660 ???? 3F93      		push r19
+ 661 ???? 4F93      		push r20
+ 662 ???? 5F93      		push r21
+ 663 ???? 6F93      		push r22
+ 664 ???? 7F93      		push r23
+ 665 ???? 8F93      		push r24
+ 666 ???? 9F93      		push r25
+ 667 ???? AF93      		push r26
+ 668 ???? BF93      		push r27
+ 669 ???? EF93      		push r30
+ 670 ???? FF93      		push r31
+ 671 ???? DF93      		push r29
+ 672 ???? CF93      		push r28
+ 673 ???? CDB7      		in r28,__SP_L__
+ 674 ???? DEB7      		in r29,__SP_H__
+ 675 ???? 2097      		sbiw r28,17
+ 676 ???? DEBF      		out __SP_H__,r29
+ 677 ???? CDBF      		out __SP_L__,r28
+ 678               	/* prologue: Signal */
+ 679               	/* frame size = 17 */
+ 680               	.LM56:
+ 681 ???? 80E0      		ldi r24,lo8(17)
+ 682 ???? F82E      		mov r15,r24
+ 683 ???? 8E01      		movw r16,r28
+ 684 ???? 0050      		subi r16,lo8(-(1))
+ 685 ???? 1040      		sbci r17,hi8(-(1))
+ 686 ???? F801      		movw r30,r16
+ 687 ???? 8F2D      		mov r24,r15
+ 688 ???? 1192      		st Z+,__zero_reg__
+ 689 ???? 8A95      	        dec r24
+ 690 ???? 01F4      		brne .-6
+ 691               	.LM57:
+ 692 ???? C801      		movw r24,r16
+ 693 ???? 60E0      		ldi r22,lo8(.LC11)
+ 694 ???? 70E0      		ldi r23,hi8(.LC11)
+ 695 ???? 00D0      		rcall strcpy
+ 696               	.LM58:
+ 697 ???? F801      		movw r30,r16
+ 698 ???? 8F2D      		mov r24,r15
+ 699 ???? 1192      		st Z+,__zero_reg__
+ 700 ???? 8A95      	        dec r24
+ 701 ???? 01F4      		brne .-6
+ 702               	.LM59:
+ 703 ???? F801      		movw r30,r16
+ 704 ???? 1192      		st Z+,__zero_reg__
+ 705 ???? FA94      	        dec r15
+ 706 ???? 01F4      		brne .-6
+ 707               	/* epilogue start */
+ 708               	.LM60:
+ 709 ???? 2096      		adiw r28,17
+ 710 ???? DEBF      		out __SP_H__,r29
+ 711 ???? CDBF      		out __SP_L__,r28
+ 712 ???? CF91      		pop r28
+ 713 ???? DF91      		pop r29
+ 714 ???? FF91      		pop r31
+ 715 ???? EF91      		pop r30
+ 716 ???? BF91      		pop r27
+ 717 ???? AF91      		pop r26
+ 718 ???? 9F91      		pop r25
+ 719 ???? 8F91      		pop r24
+ 720 ???? 7F91      		pop r23
+ 721 ???? 6F91      		pop r22
+ 722 ???? 5F91      		pop r21
+ 723 ???? 4F91      		pop r20
+ 724 ???? 3F91      		pop r19
+ 725 ???? 2F91      		pop r18
+ 726 ???? 1F91      		pop r17
+ 727 ???? 0F91      		pop r16
+ 728 ???? FF90      		pop r15
+ 729 ???? 0F90      		pop r0
+ 730 ???? 0FBE      		out __SREG__,r0
+ 731 ???? 0F90      		pop r0
+ 732 ???? 1F90      		pop __zero_reg__
+ 733 ???? 1895      		reti
+ 734               	.LFE8:
+ 784               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:2      *ABS*:0000003f __SREG__
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:3      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:4      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:5      *ABS*:00000034 __CCP__
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:21     .text:00000000 DisableLeds
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:33     .text:00000000 L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:36     .text:00000000 main
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:116    .text:00000000 L11
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:172    .text:00000000 L12
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:195    .text:00000000 L13
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:219    .text:00000000 L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:246    .text:00000000 DoCommand
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:271    .text:00000002 L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:277    .text:00000002 L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:597    .text:00000002 L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:598    .text:00000002 L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:599    .text:00000002 L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:641    .text:00000000 L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:648    .text:00000000 __vector_1
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:690    .text:00000002 L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:701    .text:00000002 L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:706    .text:00000002 L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:735    .text:00000000 L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:2087   .debug_line:00000000 L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:2087   .debug_line:0000001a L0
+C:\DOCUME~1\9335~1\LOCALS~1\Temp/ccTPgqTh.s:2087   .debug_line:0000001a L0
+
+UNDEFINED SYMBOLS
+strcpy
+sprintf
+__do_copy_data
